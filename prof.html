@@ -391,7 +391,10 @@
       <p><b>Étape 1.</b> Scanne le QR code avec l'appareil photo</p>
       <p><b>Étape 2.</b> Saisis ton pseudo : <span style="background: var(--orange); color: white; padding: 4px 8px; border-radius: 4px;">1ʳᵉ lettre prénom + 4 lettres nom</span></p>
       <p><b>Étape 3.</b> Choisis ta classe — c'est parti</p>
-      <p style="margin-top: 14px; font-size: 13pt; color: rgba(255,255,255,0.7);">URL : <span id="url-eleve"></span></p>
+      <p style="margin-top: 14px; font-size: 13pt;">
+        Si le QR ne marche pas :
+        <a id="url-eleve" target="_blank" rel="noopener" style="color: #ffb380; word-break: break-all; text-decoration: underline;"></a>
+      </p>
     </div>
   </div>
   <div class="ligne-tags">
@@ -1172,7 +1175,9 @@ document.getElementById('btn-export').addEventListener('click', async () => {
 
 // ================== QR CODE ==================
 function genererQR() {
-  document.getElementById('url-eleve').textContent = ELEVE_URL;
+  const lien = document.getElementById('url-eleve');
+  lien.textContent = ELEVE_URL;
+  lien.href = ELEVE_URL;
   const cible = document.getElementById('qrcode');
   if (!cible) return;
   cible.innerHTML = '';
