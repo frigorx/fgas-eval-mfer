@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>inerWeb Édu — Cours interactif F-Gas III · Prof</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root {
     --bleu: #1b3a63;
@@ -384,7 +384,7 @@
   <p class="sous-titre">Connecte-toi avec ton téléphone pour participer</p>
   <div style="display: flex; gap: 40px; align-items: center; margin-top: 12px;">
     <div class="qr-wrap">
-      <canvas id="qrcode"></canvas>
+      <div id="qrcode" style="width:280px; height:280px;"></div>
       <div class="qr-instructions">📱 Scanne ce QR code</div>
     </div>
     <div style="font-size: 16pt; line-height: 1.6;">
@@ -1173,13 +1173,29 @@ document.getElementById('btn-export').addEventListener('click', async () => {
 // ================== QR CODE ==================
 function genererQR() {
   document.getElementById('url-eleve').textContent = ELEVE_URL;
-  if (window.QRCode && document.getElementById('qrcode')) {
-    QRCode.toCanvas(document.getElementById('qrcode'), ELEVE_URL, {
-      width: 280,
-      margin: 1,
-      color: { dark: '#1b3a63', light: '#ffffff' }
-    });
+  const cible = document.getElementById('qrcode');
+  if (!cible) return;
+  cible.innerHTML = '';
+  if (window.QRCode) {
+    try {
+      new QRCode(cible, {
+        text: ELEVE_URL,
+        width: 280,
+        height: 280,
+        colorDark: '#1b3a63',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      return;
+    } catch (e) {
+      console.warn('QRCode lib échouée, fallback image:', e);
+    }
   }
+  const img = document.createElement('img');
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&color=1b3a63&data=' + encodeURIComponent(ELEVE_URL);
+  img.alt = 'QR code de connexion';
+  img.width = 280; img.height = 280;
+  cible.appendChild(img);
 }
 
 // ================== INIT ==================
