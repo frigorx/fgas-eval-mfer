@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>inerWeb Édu — F-Gas III</title>
+<style>
+  :root {
+    --bleu: #1b3a63;
+    --orange: #ff6b35;
+    --vert: #2e8b57;
+    --rouge: #d62828;
+    --fond: #f5f7fa;
+    --texte: #1b3a63;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Calibri', 'Segoe UI', sans-serif;
+    font-size: 16pt;
+    line-height: 1.5;
+    background: var(--fond);
+    color: var(--texte);
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+  .app { padding: 16px; max-width: 600px; margin: 0 auto; }
+  header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0 16px;
+    border-bottom: 2px solid var(--bleu);
+  }
+  .flocon { font-size: 24pt; color: var(--orange); }
+  .logo {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-weight: bold; font-size: 18pt; color: var(--bleu);
+  }
+  .badge-edu {
+    background: var(--orange); color: white;
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 11pt; font-weight: bold;
+  }
+  h1 {
+    font-family: 'Trebuchet MS', sans-serif;
+    color: var(--bleu);
+    font-size: 22pt; margin: 16px 0 8px;
+  }
+  h2 {
+    font-family: 'Trebuchet MS', sans-serif;
+    color: var(--bleu); font-size: 18pt; margin: 12px 0 6px;
+  }
+  p { margin: 8px 0; }
+  label { display: block; margin: 12px 0 4px; font-weight: bold; }
+  input, select {
+    width: 100%; padding: 12px;
+    font-size: 16pt;
+    border: 2px solid var(--bleu);
+    border-radius: 8px;
+    background: white;
+  }
+  button {
+    width: 100%; padding: 14px;
+    font-size: 16pt; font-weight: bold;
+    border: none; border-radius: 8px;
+    background: var(--bleu); color: white;
+    margin-top: 12px; cursor: pointer;
+    font-family: inherit;
+  }
+  button.orange { background: var(--orange); }
+  button.test { background: #888; font-size: 13pt; padding: 10px; }
+  button:disabled { opacity: 0.5; }
+  .reponse {
+    width: 100%; padding: 18px;
+    font-size: 17pt; font-weight: bold;
+    border: 3px solid var(--bleu);
+    border-radius: 12px;
+    background: white; color: var(--bleu);
+    margin: 10px 0; text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .reponse:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .reponse.choisi {
+    background: var(--bleu); color: white;
+  }
+  .reponse.juste {
+    background: var(--vert); color: white; border-color: var(--vert);
+  }
+  .reponse.faux {
+    background: var(--rouge); color: white; border-color: var(--rouge);
+  }
+  .lettre {
+    display: inline-block;
+    width: 32px; height: 32px;
+    background: var(--orange); color: white;
+    border-radius: 50%;
+    text-align: center; line-height: 32px;
+    margin-right: 10px; font-weight: bold;
+  }
+  .info {
+    background: white;
+    padding: 14px;
+    border-left: 4px solid var(--orange);
+    border-radius: 4px;
+    margin: 12px 0;
+  }
+  .badge-pseudo {
+    display: inline-block;
+    background: var(--bleu); color: white;
+    padding: 6px 12px; border-radius: 6px;
+    font-weight: bold; font-size: 14pt;
+  }
+  .score {
+    background: var(--vert); color: white;
+    padding: 10px 14px; border-radius: 8px;
+    font-size: 14pt; font-weight: bold;
+    text-align: center; margin: 12px 0;
+  }
+  .attente {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 18pt;
+    color: #666;
+  }
+  .attente .pulse {
+    display: inline-block;
+    width: 16px; height: 16px;
+    background: var(--orange); border-radius: 50%;
+    animation: pulse 1.2s ease-in-out infinite;
+    margin-right: 10px;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+  .alerte-rouge {
+    position: fixed; inset: 0;
+    background: #d62828;
+    color: white;
+    z-index: 9999;
+    display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: 20px; text-align: center;
+    animation: clignote 0.5s steps(2) infinite;
+  }
+  .alerte-rouge.visible { display: flex; }
+  .alerte-rouge h1 {
+    color: white; font-size: 28pt; margin: 0 0 16px;
+  }
+  .alerte-rouge p { font-size: 18pt; margin: 8px 0; }
+  @keyframes clignote {
+    0%, 49% { background: #d62828; }
+    50%, 100% { background: #ff8c00; }
+  }
+  .historique {
+    margin-top: 20px; padding: 12px;
+    background: white; border-radius: 8px;
+    font-size: 13pt;
+  }
+  .historique-ligne {
+    display: flex; justify-content: space-between;
+    padding: 4px 0; border-bottom: 1px solid #eee;
+  }
+  .historique-ligne:last-child { border: none; }
+  .ok { color: var(--vert); }
+  .ko { color: var(--rouge); }
+  footer {
+    text-align: center; font-size: 11pt; color: #888;
+    margin-top: 30px; padding: 12px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="alerte-rouge" id="alerte">
+  <h1>⚠️ TU ES SORTI</h1>
+  <p>Reviens IMMÉDIATEMENT sur la page</p>
+  <p style="font-size: 14pt; opacity: 0.9;">Sortie comptée par le prof</p>
+</div>
+
+<div class="app">
+
+<header>
+  <span class="flocon">❄</span>
+  <span class="logo">inerWeb</span>
+  <span class="badge-edu">Édu</span>
+</header>
+
+<!-- ÉCRAN 1 : Connexion -->
+<div id="ecran-connexion">
+  <h1>Bienvenue</h1>
+  <p>Bac Pro MFER · Cours interactif F-Gas III</p>
+
+  <div class="info">
+    <strong>📝 Construis ton pseudo</strong><br>
+    1ʳᵉ lettre du <b>prénom</b> + 4 premières lettres du <b>nom</b>.<br>
+    Exemple : <b>Franck Henninot</b> → <code>FHENN</code>
+  </div>
+
+  <label>Ton pseudo</label>
+  <input type="text" id="pseudo" maxlength="6" placeholder="Ex: FHENN" autocapitalize="characters" autocomplete="off">
+
+  <label>Ta classe</label>
+  <select id="classe">
+    <option value="">-- choisir --</option>
+    <option value="2NDE-TNE">2nde TNE</option>
+    <option value="1ERE-MFER">1ʳᵉ Bac Pro MFER</option>
+    <option value="TERM-MFER">Tle Bac Pro MFER</option>
+    <option value="CAP-IFCA-1">CAP IFCA 1ʳᵉ année</option>
+    <option value="CAP-IFCA-2">CAP IFCA 2ᵉ année</option>
+  </select>
+
+  <button id="btn-connect">Se connecter</button>
+</div>
+
+<!-- ÉCRAN 2 : Onboarding / Test -->
+<div id="ecran-onboarding" style="display:none">
+  <h1>✅ Connecté</h1>
+  <p>Pseudo : <span class="badge-pseudo" id="badge-pseudo"></span></p>
+  <p>Classe : <span id="badge-classe"></span></p>
+
+  <div class="info">
+    <strong>🎮 Règles du jeu</strong>
+    <ul>
+      <li>Le prof affiche les questions au tableau</li>
+      <li>Tu réponds sur ton tel : <b>1 clic = définitif</b></li>
+      <li>Pas de retour en arrière</li>
+      <li>Reste sur cette page : <b>sortir = vibration + son + tu es grillé</b></li>
+    </ul>
+  </div>
+
+  <button class="test" id="btn-test-vibration">🧪 Tester la vibration</button>
+
+  <div class="attente">
+    <span class="pulse"></span>En attente du prof...
+  </div>
+</div>
+
+<!-- ÉCRAN 3 : Question -->
+<div id="ecran-question" style="display:none">
+  <p style="margin: 0 0 4px; color: #666; font-size: 13pt;">
+    <span class="badge-pseudo" id="qbadge-pseudo"></span>
+    <span style="margin-left: 8px;" id="qbadge-id"></span>
+  </p>
+  <h2 id="q-enonce">Question...</h2>
+  <div id="q-reponses"></div>
+  <p id="q-statut" style="text-align: center; color: #666; margin-top: 14px;"></p>
+</div>
+
+<!-- ÉCRAN 4 : Correction -->
+<div id="ecran-correction" style="display:none">
+  <h2 id="c-titre">Résultat</h2>
+  <div id="c-resultat"></div>
+  <div class="info" id="c-explication"></div>
+  <div class="score" id="c-score"></div>
+  <div class="attente">
+    <span class="pulse"></span>En attente de la suite...
+  </div>
+  <div class="historique" id="c-historique"></div>
+</div>
+
+<!-- ÉCRAN 5 : QCM final -->
+<div id="ecran-qcm" style="display:none">
+  <h1>📝 QCM final</h1>
+  <p id="qcm-progression">Question 1 / 20</p>
+  <h2 id="qcm-enonce"></h2>
+  <div id="qcm-propositions"></div>
+</div>
+
+<!-- ÉCRAN 6 : Fin -->
+<div id="ecran-fin" style="display:none">
+  <h1>🎉 Terminé</h1>
+  <p>Voici ta note :</p>
+  <div class="score" style="font-size: 24pt; padding: 24px;" id="fin-note">--/20</div>
+  <p id="fin-detail"></p>
+  <p style="text-align: center; color: #666;">
+    Le prof récupère les notes de toute la classe.
+  </p>
+</div>
+
+<footer>
+  inerWeb Édu · F. Henninot · LP Privé Jacques Raynaud
+</footer>
+
+</div>
+
+<script>
+// ================== CONFIG ==================
+const GAS_URL = window.GAS_URL || localStorage.getItem('gas_url') || '';
+const POLL_INTERVAL = 2000;
+const HEARTBEAT_INTERVAL = 8000;
+
+// Permet override via ?gas=URL en query string
+const params = new URLSearchParams(location.search);
+if (params.get('gas')) {
+  localStorage.setItem('gas_url', params.get('gas'));
+  location.replace(location.pathname);
+}
+
+if (!GAS_URL) {
+  document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:sans-serif"><h1>⚙️ Config manquante</h1><p>L\'URL Apps Script doit être passée en paramètre <code>?gas=...</code> ou définie dans <code>localStorage.gas_url</code>.</p></div>';
+}
+
+// ================== ÉTAT GLOBAL ==================
+let etat = {
+  pseudo: localStorage.getItem('pseudo') || '',
+  classe: localStorage.getItem('classe') || '',
+  phase: 'attente',
+  qid_actif: '',
+  questions: null,
+  reponses_donnees: {},
+  reponses_qcm: {},
+  qcm_index: 0,
+  qcm_version: localStorage.getItem('qcm_version') || 'A'
+};
+
+// ================== HTTP ==================
+async function gasGet(action, params = {}) {
+  const url = new URL(GAS_URL);
+  url.searchParams.set('action', action);
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  try {
+    const r = await fetch(url.toString());
+    return await r.json();
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+async function gasPost(action, data = {}) {
+  try {
+    const r = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action, ...data })
+    });
+    return await r.json();
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+// ================== UI ==================
+const ecrans = ['connexion', 'onboarding', 'question', 'correction', 'qcm', 'fin'];
+function afficher(nom) {
+  ecrans.forEach(e => {
+    const el = document.getElementById('ecran-' + e);
+    if (el) el.style.display = (e === nom) ? '' : 'none';
+  });
+}
+
+// ================== CONNEXION ==================
+document.getElementById('btn-connect').addEventListener('click', async () => {
+  const pseudo = document.getElementById('pseudo').value.trim().toUpperCase();
+  const classe = document.getElementById('classe').value;
+  if (pseudo.length < 2 || pseudo.length > 6) {
+    alert('Pseudo : 5 caractères (1 lettre prénom + 4 lettres nom). Ex : FHENN');
+    return;
+  }
+  if (!classe) { alert('Choisis ta classe'); return; }
+  const r = await gasPost('connect', { pseudo, classe });
+  if (!r.ok) { alert('Erreur : ' + (r.error || 'connexion échouée')); return; }
+  etat.pseudo = pseudo;
+  etat.classe = classe;
+  localStorage.setItem('pseudo', pseudo);
+  localStorage.setItem('classe', classe);
+  const versions = ['A', 'B', 'C', 'D'];
+  etat.qcm_version = versions[Math.abs(hash(pseudo)) % 4];
+  localStorage.setItem('qcm_version', etat.qcm_version);
+  document.getElementById('badge-pseudo').textContent = pseudo;
+  document.getElementById('qbadge-pseudo').textContent = pseudo;
+  document.getElementById('badge-classe').textContent = classe;
+  afficher('onboarding');
+  await chargerQuestions();
+  startPolling();
+  startHeartbeat();
+});
+
+function hash(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i);
+  return h;
+}
+
+// ================== CHARGEMENT QUESTIONS ==================
+async function chargerQuestions() {
+  try {
+    const r = await fetch('data/questions.json?v=' + Date.now());
+    etat.questions = await r.json();
+  } catch (e) {
+    console.error('Erreur chargement questions', e);
+  }
+}
+
+// ================== POLLING ÉTAT ==================
+function startPolling() {
+  setInterval(async () => {
+    const r = await gasGet('state');
+    if (!r.ok) return;
+    if (r.phase !== etat.phase || r.qid_actif !== etat.qid_actif) {
+      etat.phase = r.phase;
+      etat.qid_actif = r.qid_actif;
+      handleEtatChange();
+    }
+  }, POLL_INTERVAL);
+}
+
+function handleEtatChange() {
+  if (etat.phase === 'attente' || etat.phase === 'cours') {
+    afficher('onboarding');
+  } else if (etat.phase === 'question') {
+    afficherQuestion(etat.qid_actif);
+  } else if (etat.phase === 'correction') {
+    afficherCorrection(etat.qid_actif);
+  } else if (etat.phase === 'qcm_final') {
+    demarrerQCMFinal();
+  } else if (etat.phase === 'fin') {
+    afficher('fin');
+  }
+}
+
+// ================== AFFICHAGE QUESTION ==================
+function trouverQuestion(qid) {
+  if (!etat.questions) return null;
+  if (etat.questions.test && etat.questions.test.id === qid) return etat.questions.test;
+  return etat.questions.checkpoints.find(q => q.id === qid);
+}
+
+function afficherQuestion(qid) {
+  const q = trouverQuestion(qid);
+  if (!q) return;
+  document.getElementById('qbadge-id').textContent = q.id;
+  document.getElementById('q-enonce').textContent = q.question;
+  const cont = document.getElementById('q-reponses');
+  cont.innerHTML = '';
+  const dejaRepondu = !!etat.reponses_donnees[qid];
+  q.propositions.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'reponse';
+    btn.innerHTML = '<span class="lettre">' + p.lettre + '</span>' + p.texte;
+    btn.disabled = dejaRepondu;
+    if (dejaRepondu && etat.reponses_donnees[qid] === p.lettre) btn.classList.add('choisi');
+    btn.addEventListener('click', () => repondre(q, p.lettre));
+    cont.appendChild(btn);
+  });
+  document.getElementById('q-statut').textContent = dejaRepondu
+    ? '✓ Réponse envoyée — attendre la correction'
+    : 'Choisis ta réponse (1 clic = définitif)';
+  afficher('question');
+}
+
+async function repondre(q, lettre) {
+  if (etat.reponses_donnees[q.id]) return;
+  etat.reponses_donnees[q.id] = lettre;
+  const juste = (lettre === q.bonne_reponse);
+  document.querySelectorAll('#q-reponses .reponse').forEach(b => b.disabled = true);
+  document.querySelectorAll('#q-reponses .reponse').forEach(b => {
+    if (b.textContent.trim().startsWith(lettre)) b.classList.add('choisi');
+  });
+  document.getElementById('q-statut').textContent = '✓ Réponse envoyée — attendre la correction';
+  await gasPost('answer', {
+    pseudo: etat.pseudo,
+    qid: q.id,
+    lettre,
+    juste
+  });
+}
+
+// ================== CORRECTION ==================
+function afficherCorrection(qid) {
+  const q = trouverQuestion(qid);
+  if (!q) return;
+  const lettreChoisie = etat.reponses_donnees[qid];
+  const juste = lettreChoisie === q.bonne_reponse;
+  document.getElementById('c-titre').textContent = juste ? '✅ Bonne réponse !' : '❌ Mauvaise réponse';
+  let html = '';
+  q.propositions.forEach(p => {
+    const cls = p.lettre === q.bonne_reponse ? 'juste'
+              : p.lettre === lettreChoisie ? 'faux'
+              : '';
+    html += '<div class="reponse ' + cls + '" style="cursor:default"><span class="lettre">' + p.lettre + '</span>' + p.texte + '</div>';
+  });
+  document.getElementById('c-resultat').innerHTML = html;
+  document.getElementById('c-explication').innerHTML = '<strong>💡 ' + (q.explication || '') + '</strong>';
+  const totalJustes = Object.entries(etat.reponses_donnees).filter(([id, l]) => {
+    const qq = trouverQuestion(id);
+    return qq && !id.startsWith('Q0') && l === qq.bonne_reponse;
+  }).length;
+  const totalRepondu = Object.keys(etat.reponses_donnees).filter(id => !id.startsWith('Q0')).length;
+  document.getElementById('c-score').textContent = 'Score checkpoint : ' + totalJustes + ' / ' + totalRepondu;
+  let histo = '<strong>Tes réponses :</strong>';
+  Object.entries(etat.reponses_donnees).forEach(([id, l]) => {
+    if (id.startsWith('Q0')) return;
+    const qq = trouverQuestion(id);
+    if (!qq) return;
+    const ok = l === qq.bonne_reponse;
+    histo += '<div class="historique-ligne"><span>' + id + ' — ' + (qq.theme || '') + '</span><span class="' + (ok ? 'ok' : 'ko') + '">' + (ok ? '✅' : '❌') + ' ' + l + '</span></div>';
+  });
+  document.getElementById('c-historique').innerHTML = histo;
+  afficher('correction');
+}
+
+// ================== QCM FINAL ==================
+function demarrerQCMFinal() {
+  if (!etat.questions || !etat.questions.qcm_final) return;
+  const versions = ['A', 'B', 'C', 'D'];
+  const qcm = JSON.parse(JSON.stringify(etat.questions.qcm_final.questions));
+  const seed = hash(etat.pseudo + etat.qcm_version);
+  shuffleSeeded(qcm, seed);
+  qcm.forEach(q => {
+    const indices = q.propositions.map((_, i) => i);
+    shuffleSeeded(indices, seed + hash(q.id));
+    q.propositions_melangees = indices.map(i => q.propositions[i]);
+    q.bonne_reponse_index_melangee = indices.indexOf(q.bonne_reponse_index);
+  });
+  etat.qcm_questions = qcm;
+  etat.qcm_index = 0;
+  etat.reponses_qcm = {};
+  afficher('qcm');
+  afficherQuestionQCM();
+}
+
+function shuffleSeeded(arr, seed) {
+  let s = Math.abs(seed) || 1;
+  for (let i = arr.length - 1; i > 0; i--) {
+    s = (s * 9301 + 49297) % 233280;
+    const j = Math.floor((s / 233280) * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function afficherQuestionQCM() {
+  const i = etat.qcm_index;
+  const total = etat.qcm_questions.length;
+  if (i >= total) return finQCM();
+  const q = etat.qcm_questions[i];
+  document.getElementById('qcm-progression').textContent = 'Question ' + (i + 1) + ' / ' + total + ' · Version ' + etat.qcm_version;
+  document.getElementById('qcm-enonce').textContent = q.question;
+  const cont = document.getElementById('qcm-propositions');
+  cont.innerHTML = '';
+  q.propositions_melangees.forEach((texte, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'reponse';
+    const lettre = String.fromCharCode(65 + idx);
+    btn.innerHTML = '<span class="lettre">' + lettre + '</span>' + texte;
+    btn.addEventListener('click', () => repondreQCM(q, idx, btn));
+    cont.appendChild(btn);
+  });
+}
+
+async function repondreQCM(q, idx, btn) {
+  if (etat.reponses_qcm[q.id] !== undefined) return;
+  etat.reponses_qcm[q.id] = idx;
+  document.querySelectorAll('#qcm-propositions .reponse').forEach(b => b.disabled = true);
+  btn.classList.add('choisi');
+  const juste = idx === q.bonne_reponse_index_melangee;
+  await gasPost('qcm_answer', {
+    pseudo: etat.pseudo,
+    qid: q.id,
+    reponse_index: idx,
+    juste
+  });
+  setTimeout(() => {
+    etat.qcm_index++;
+    afficherQuestionQCM();
+  }, 600);
+}
+
+async function finQCM() {
+  let score = 0;
+  etat.qcm_questions.forEach(q => {
+    if (etat.reponses_qcm[q.id] === q.bonne_reponse_index_melangee) score++;
+  });
+  const sur = etat.qcm_questions.length;
+  await gasPost('submit_qcm', {
+    pseudo: etat.pseudo,
+    classe: etat.classe,
+    score, sur,
+    version: etat.qcm_version
+  });
+  const note20 = (score * 20 / sur).toFixed(1);
+  document.getElementById('fin-note').textContent = note20 + ' / 20';
+  document.getElementById('fin-detail').textContent = score + ' bonnes réponses sur ' + sur + ' · Version ' + etat.qcm_version;
+  afficher('fin');
+}
+
+// ================== ANTI-DÉCROCHAGE ==================
+let sortieEnCours = false;
+let alerteEl = document.getElementById('alerte');
+let alarmAudio = null;
+
+function initAlarm() {
+  alarmAudio = new Audio('data:audio/wav;base64,UklGRtwAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YbgAAAA=');
+}
+initAlarm();
+
+function declencheAlerte() {
+  alerteEl.classList.add('visible');
+  if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500, 200, 1000]);
+  jouerSirene();
+}
+
+function jouerSirene() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(1600, ctx.currentTime + 0.5);
+    osc.frequency.linearRampToValueAtTime(800, ctx.currentTime + 1);
+    osc.frequency.linearRampToValueAtTime(1600, ctx.currentTime + 1.5);
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    osc.start(); osc.stop(ctx.currentTime + 2);
+  } catch (e) {}
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (!etat.pseudo) return;
+  if (document.hidden) {
+    sortieEnCours = true;
+    gasPost('heartbeat', { pseudo: etat.pseudo, sortie: true });
+  } else {
+    if (sortieEnCours) {
+      sortieEnCours = false;
+      declencheAlerte();
+      setTimeout(() => alerteEl.classList.remove('visible'), 4000);
+    }
+  }
+});
+
+document.getElementById('btn-test-vibration').addEventListener('click', () => {
+  declencheAlerte();
+  setTimeout(() => alerteEl.classList.remove('visible'), 2500);
+});
+
+// ================== HEARTBEAT ==================
+function startHeartbeat() {
+  setInterval(() => {
+    if (etat.pseudo) gasPost('heartbeat', { pseudo: etat.pseudo });
+  }, HEARTBEAT_INTERVAL);
+}
+
+// ================== AUTO-RECONNECT ==================
+if (etat.pseudo && etat.classe) {
+  document.getElementById('badge-pseudo').textContent = etat.pseudo;
+  document.getElementById('qbadge-pseudo').textContent = etat.pseudo;
+  document.getElementById('badge-classe').textContent = etat.classe;
+  afficher('onboarding');
+  chargerQuestions().then(() => {
+    startPolling();
+    startHeartbeat();
+  });
+}
+</script>
+
+</body>
+</html>

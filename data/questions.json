@@ -1,0 +1,507 @@
+{
+  "meta": {
+    "cours": "Réforme F-Gas III — Habilitation fluides frigorigènes",
+    "niveau": "BAC PRO MFER",
+    "auteur": "F. Henninot — LP Privé Jacques Raynaud",
+    "version": "1.0",
+    "date_creation": "2026-04-29"
+  },
+  "test": {
+    "id": "Q0",
+    "slide_apres": 2,
+    "type": "test",
+    "enonce": "On démarre par une question de test pour vérifier que ton tel est bien connecté.",
+    "question": "Quelles sont les couleurs du logo inerWeb au tableau ?",
+    "propositions": [
+      { "lettre": "A", "texte": "Bleu marine et orange" },
+      { "lettre": "B", "texte": "Vert fluo et noir" },
+      { "lettre": "C", "texte": "Rouge et jaune" },
+      { "lettre": "D", "texte": "Tout en niveaux de gris" }
+    ],
+    "bonne_reponse": "A",
+    "explication": "Bleu #1b3a63 et orange #ff6b35. Si tu vois la bonne réponse en vert sur ton tel, tout fonctionne. On peut commencer le cours.",
+    "comptabilise": false
+  },
+  "checkpoints": [
+    {
+      "id": "Q1",
+      "slide_apres": 4,
+      "theme": "Pourquoi la réforme",
+      "ton": "serieux",
+      "question": "Quel règlement européen est à l'origine de la réforme française du 21 novembre 2025 ?",
+      "propositions": [
+        { "lettre": "A", "texte": "Le règlement F-Gas I de 2006" },
+        { "lettre": "B", "texte": "Le règlement F-Gas II de 2014" },
+        { "lettre": "C", "texte": "Le règlement F-Gas III (UE) 2024/573" },
+        { "lettre": "D", "texte": "Le protocole de Kyoto" }
+      ],
+      "bonne_reponse": "C",
+      "explication": "F-Gas III (UE) 2024/573 est entré en application le 11 mars 2024. La France a transposé ses exigences avec les arrêtés du 21 novembre 2025."
+    },
+    {
+      "id": "Q2",
+      "slide_apres": 5,
+      "theme": "Aptitude vs Capacité",
+      "ton": "serieux",
+      "question": "Ton patron te dit : « T'inquiète, j'ai l'attestation de capacité de la boîte, tu peux manipuler le R-32 sans problème. » Tu réponds quoi ?",
+      "propositions": [
+        { "lettre": "A", "texte": "OK chef, je sors la station de récup tout de suite" },
+        { "lettre": "B", "texte": "La capacité c'est l'entreprise, moi il me faut l'attestation d'aptitude A1 ou A2" },
+        { "lettre": "C", "texte": "Pas grave, on est en transitoire jusqu'en 2027" },
+        { "lettre": "D", "texte": "Je récupère d'abord, on régularise après" }
+      ],
+      "bonne_reponse": "B",
+      "explication": "Aptitude = la personne (toi). Capacité = l'entreprise. L'une ne remplace JAMAIS l'autre. Sans aptitude, interdiction de manipuler, même si l'entreprise a sa capacité."
+    },
+    {
+      "id": "Q3",
+      "slide_apres": 5,
+      "theme": "Aptitude vs Capacité",
+      "ton": "serieux",
+      "question": "Combien de temps est valide la NOUVELLE attestation d'aptitude (régime 2025) ?",
+      "propositions": [
+        { "lettre": "A", "texte": "À vie, comme avant" },
+        { "lettre": "B", "texte": "5 ans" },
+        { "lettre": "C", "texte": "7 ans" },
+        { "lettre": "D", "texte": "10 ans" }
+      ],
+      "bonne_reponse": "C",
+      "explication": "7 ans, c'est LA grande nouveauté. Avant : à vie. Maintenant : remise à niveau obligatoire avant la fin des 7 ans pour prolonger."
+    },
+    {
+      "id": "Q4",
+      "slide_apres": 6,
+      "theme": "Calendrier",
+      "ton": "serieux",
+      "question": "À partir de quelle date le nouveau régime devient-il OBLIGATOIRE pour toute nouvelle attestation ?",
+      "propositions": [
+        { "lettre": "A", "texte": "6 décembre 2025" },
+        { "lettre": "B", "texte": "31 décembre 2026" },
+        { "lettre": "C", "texte": "1ᵉʳ janvier 2027" },
+        { "lettre": "D", "texte": "12 mars 2029" }
+      ],
+      "bonne_reponse": "C",
+      "explication": "1ᵉʳ janvier 2027 = bascule complète. Avant cette date, l'ancien et le nouveau cohabitent (période transitoire). Après : seul le nouveau régime s'applique."
+    },
+    {
+      "id": "Q5",
+      "slide_apres": 6,
+      "theme": "Calendrier",
+      "ton": "serieux",
+      "question": "Tu as un collègue qui a son attestation cat. II depuis 2015. Date butoir pour qu'il fasse sa mise à niveau ?",
+      "propositions": [
+        { "lettre": "A", "texte": "Pas besoin, son attestation est à vie" },
+        { "lettre": "B", "texte": "31 décembre 2026" },
+        { "lettre": "C", "texte": "12 mars 2029" },
+        { "lettre": "D", "texte": "Quand son patron lui demandera" }
+      ],
+      "bonne_reponse": "C",
+      "explication": "12 mars 2029 = date butoir pour les anciens titulaires (cat. I à IV). Sans mise à niveau ponctuelle avant cette date, l'attestation devient invalide et il faut repasser l'examen complet."
+    },
+    {
+      "id": "Q6",
+      "slide_apres": 7,
+      "theme": "Avant/Après",
+      "ton": "serieux",
+      "question": "Quel est le NOUVEAU critère principal de classification des catégories ?",
+      "propositions": [
+        { "lettre": "A", "texte": "La charge en fluide de l'équipement (≥ ou < 2 kg)" },
+        { "lettre": "B", "texte": "Le type de fluide manipulé (fluoré, HC, CO₂, NH₃)" },
+        { "lettre": "C", "texte": "La taille de l'entreprise" },
+        { "lettre": "D", "texte": "L'ancienneté du technicien" }
+      ],
+      "bonne_reponse": "B",
+      "explication": "Avant : on regardait COMBIEN de fluide (la charge). Maintenant : on regarde QUEL fluide. Logique tournée vers la sécurité spécifique à chaque famille (haute pression CO₂, toxicité NH₃, inflammabilité HC)."
+    },
+    {
+      "id": "Q7",
+      "slide_apres": 8,
+      "theme": "Catégories vue d'ensemble",
+      "ton": "serieux",
+      "question": "Combien de catégories d'attestation d'aptitude existent dans le nouveau régime ?",
+      "propositions": [
+        { "lettre": "A", "texte": "4 catégories (I à IV)" },
+        { "lettre": "B", "texte": "5 catégories (I à V)" },
+        { "lettre": "C", "texte": "7 catégories (A1, A2, B, C, D, E, V)" },
+        { "lettre": "D", "texte": "10 catégories" }
+      ],
+      "bonne_reponse": "C",
+      "explication": "7 catégories : A1 (tous équipements fluorés/HC), A2 (petite charge), B (CO₂), C (NH₃), D (récupération), E (étanchéité), V (véhicules)."
+    },
+    {
+      "id": "Q8",
+      "slide_apres": 9,
+      "theme": "A1 / A2",
+      "ton": "serieux",
+      "question": "Quelle est la limite de charge pour la catégorie A2 sur un équipement NON HERMÉTIQUEMENT scellé ?",
+      "propositions": [
+        { "lettre": "A", "texte": "< 1 kg" },
+        { "lettre": "B", "texte": "< 2 kg" },
+        { "lettre": "C", "texte": "< 3 kg" },
+        { "lettre": "D", "texte": "< 6 kg" }
+      ],
+      "bonne_reponse": "C",
+      "explication": "A2 = charge < 3 kg (ou < 6 kg si l'équipement est hermétiquement scellé d'usine). Au-delà, il faut la A1."
+    },
+    {
+      "id": "Q9",
+      "slide_apres": 9,
+      "theme": "A1 / A2",
+      "ton": "mise_en_situation",
+      "question": "Tu interviens sur une centrale frigorifique négative en supermarché, charge 18 kg de R-454C. Quelle catégorie te faut-il au minimum ?",
+      "propositions": [
+        { "lettre": "A", "texte": "A1 (tous équipements, sans limite de charge)" },
+        { "lettre": "B", "texte": "A2 (petite charge < 3 kg)" },
+        { "lettre": "C", "texte": "D (récupération seule)" },
+        { "lettre": "D", "texte": "E (étanchéité seule)" }
+      ],
+      "bonne_reponse": "A",
+      "explication": "18 kg dépasse largement les 3 kg de la A2. Centrale = tous équipements. Il faut la A1, sous-division FF (fluorés) ou FF&HC selon le fluide. Le R-454C est un HFO, couvert par la A1."
+    },
+    {
+      "id": "Q10",
+      "slide_apres": 10,
+      "theme": "CO₂ et NH₃",
+      "ton": "serieux",
+      "question": "Quel est le risque PRINCIPAL spécifique au CO₂ (R-744) en froid transcritique ?",
+      "propositions": [
+        { "lettre": "A", "texte": "Sa toxicité élevée" },
+        { "lettre": "B", "texte": "Son inflammabilité" },
+        { "lettre": "C", "texte": "Sa très haute pression (jusqu'à 120 bar)" },
+        { "lettre": "D", "texte": "Sa réactivité avec les métaux" }
+      ],
+      "bonne_reponse": "C",
+      "explication": "Le CO₂ est classé A1 (non inflammable, faible toxicité). Son risque majeur est mécanique : pressions très élevées (>100 bar) avec danger d'éclatement. Outillage et raccords spécifiques obligatoires."
+    },
+    {
+      "id": "Q11",
+      "slide_apres": 10,
+      "theme": "CO₂ et NH₃",
+      "ton": "serieux",
+      "question": "Quelle est la classification de sécurité de l'ammoniac (R-717) ?",
+      "propositions": [
+        { "lettre": "A", "texte": "A1 — non inflammable, faible toxicité" },
+        { "lettre": "B", "texte": "A2L — légèrement inflammable" },
+        { "lettre": "C", "texte": "A3 — hautement inflammable" },
+        { "lettre": "D", "texte": "B2L — toxique et faiblement inflammable" }
+      ],
+      "bonne_reponse": "D",
+      "explication": "NH₃ = B2L. B = toxique. 2L = faiblement inflammable. EPI obligatoires : ARI (appareil respiratoire isolant) + combinaison. Réagit avec l'eau, ne jamais mélanger."
+    },
+    {
+      "id": "Q12",
+      "slide_apres": 11,
+      "theme": "D / E / V",
+      "ton": "mise_en_situation",
+      "question": "Une entreprise de démolition automobile (VHU) veut récupérer le fluide des climatisations avant la presse. Quelle catégorie est adaptée ?",
+      "propositions": [
+        { "lettre": "A", "texte": "A1 — tous équipements" },
+        { "lettre": "B", "texte": "Catégorie D — récupération seule" },
+        { "lettre": "C", "texte": "Catégorie E — étanchéité seule" },
+        { "lettre": "D", "texte": "Aucune, c'est de la ferraille" }
+      ],
+      "bonne_reponse": "B",
+      "explication": "La cat. D couvre exactement ce cas : récupération de fluide HFC/HFO sur équipements en fin de vie, charge < 3 kg. Typique pour les centres VHU agréés."
+    },
+    {
+      "id": "Q13",
+      "slide_apres": 12,
+      "theme": "Remise à niveau",
+      "ton": "serieux",
+      "question": "Que se passe-t-il si tu ne fais PAS ta remise à niveau dans les 7 ans ?",
+      "propositions": [
+        { "lettre": "A", "texte": "Rien, l'attestation reste valide à vie" },
+        { "lettre": "B", "texte": "Tu paies une amende mais tu peux continuer" },
+        { "lettre": "C", "texte": "L'attestation devient invalide, tu dois repasser l'examen complet" },
+        { "lettre": "D", "texte": "Tu as 2 ans supplémentaires automatiquement" }
+      ],
+      "bonne_reponse": "C",
+      "explication": "Pas de remise à niveau = attestation expirée = interdiction de manipuler. Pour récupérer le droit, il faut repasser l'examen initial complet (théorique + pratique). Bien anticiper la date d'expiration."
+    },
+    {
+      "id": "Q14",
+      "slide_apres": 13,
+      "theme": "Anciens titulaires",
+      "ton": "serieux",
+      "question": "Ton ancien tuteur a une attestation cat. I de 2010. Vers quelle nouvelle catégorie bascule-t-il après mise à niveau ?",
+      "propositions": [
+        { "lettre": "A", "texte": "Cat. A2 — petite charge" },
+        { "lettre": "B", "texte": "Cat. A1 — tous équipements" },
+        { "lettre": "C", "texte": "Cat. D — récupération seule" },
+        { "lettre": "D", "texte": "Cat. E — étanchéité seule" }
+      ],
+      "bonne_reponse": "B",
+      "explication": "Cat. I → Cat. A1 (tous équipements, toutes charges). Correspondances : I→A1, II→A2, III→D, IV→E. Mise à niveau ponctuelle obligatoire avant le 12 mars 2029."
+    },
+    {
+      "id": "Q15",
+      "slide_apres": 13,
+      "theme": "Anciens titulaires",
+      "ton": "serieux",
+      "question": "Et la cat. III de l'ancien régime, elle correspond à quoi dans le nouveau ?",
+      "propositions": [
+        { "lettre": "A", "texte": "Cat. A1 — tous équipements" },
+        { "lettre": "B", "texte": "Cat. A2 — petite charge" },
+        { "lettre": "C", "texte": "Cat. D — récupération seule" },
+        { "lettre": "D", "texte": "Cat. E — étanchéité seule" }
+      ],
+      "bonne_reponse": "C",
+      "explication": "Cat. III → Cat. D (récupération seule, charge < 3 kg, fluides HFC + HFO uniquement). Périmètre identique : récupérer le fluide en fin de vie de l'équipement."
+    },
+    {
+      "id": "Q16",
+      "slide_apres": 15,
+      "theme": "Capacité entreprise",
+      "ton": "serieux",
+      "question": "Quelle est la durée de validité de l'attestation de CAPACITÉ (entreprise) ?",
+      "propositions": [
+        { "lettre": "A", "texte": "3 ans" },
+        { "lettre": "B", "texte": "5 ans" },
+        { "lettre": "C", "texte": "7 ans (comme l'aptitude)" },
+        { "lettre": "D", "texte": "À vie" }
+      ],
+      "bonne_reponse": "B",
+      "explication": "Capacité = 5 ans. Aptitude = 7 ans. Ne pas confondre. Renouvellement de la capacité = audit + dossier complet à initier 2-3 mois avant l'expiration."
+    },
+    {
+      "id": "Q17",
+      "slide_apres": 16,
+      "theme": "Pour vous, élèves",
+      "ton": "detendu",
+      "question": "À la fin de ton BAC PRO MFER, tu vas viser quelle attestation ?",
+      "propositions": [
+        { "lettre": "A", "texte": "Cat. V — climatisation auto" },
+        { "lettre": "B", "texte": "Cat. A1 — tous équipements (ex-cat. I)" },
+        { "lettre": "C", "texte": "Cat. E — étanchéité seule" },
+        { "lettre": "D", "texte": "Aucune, je veux faire boulanger" }
+      ],
+      "bonne_reponse": "B",
+      "explication": "BAC PRO MFER = cat. A1, le périmètre le plus large du métier. Tous équipements, toutes charges, fluides fluorés et hydrocarbures. C'est le passeport professionnel principal du frigoriste."
+    }
+  ],
+  "qcm_final": {
+    "consigne": "QCM final noté sur 20. 20 questions. Pas de retour en arrière. Bonne réponse = 1 point. Mauvaise réponse = 0 point. Pas de point négatif. Bonne chance.",
+    "questions": [
+      {
+        "id": "F01",
+        "question": "Quel règlement européen impose la réforme française des arrêtés du 21 novembre 2025 ?",
+        "propositions": [
+          "F-Gas I (2006)",
+          "F-Gas II (2014)",
+          "F-Gas III — (UE) 2024/573",
+          "Protocole de Kyoto"
+        ],
+        "bonne_reponse_index": 2
+      },
+      {
+        "id": "F02",
+        "question": "L'attestation d'APTITUDE est délivrée à :",
+        "propositions": [
+          "Une entreprise",
+          "Une personne physique",
+          "Un atelier",
+          "Une organisation professionnelle"
+        ],
+        "bonne_reponse_index": 1
+      },
+      {
+        "id": "F03",
+        "question": "L'attestation de CAPACITÉ est délivrée à :",
+        "propositions": [
+          "Un technicien",
+          "Une entreprise (personne morale)",
+          "Un organisme de formation",
+          "Une école"
+        ],
+        "bonne_reponse_index": 1
+      },
+      {
+        "id": "F04",
+        "question": "Durée de validité de la nouvelle attestation d'aptitude :",
+        "propositions": [
+          "3 ans",
+          "5 ans",
+          "7 ans",
+          "À vie"
+        ],
+        "bonne_reponse_index": 2
+      },
+      {
+        "id": "F05",
+        "question": "Durée de validité de l'attestation de capacité :",
+        "propositions": [
+          "3 ans",
+          "5 ans",
+          "7 ans",
+          "À vie"
+        ],
+        "bonne_reponse_index": 1
+      },
+      {
+        "id": "F06",
+        "question": "Date à partir de laquelle le nouveau régime est SEUL applicable :",
+        "propositions": [
+          "6 décembre 2025",
+          "31 décembre 2026",
+          "1ᵉʳ janvier 2027",
+          "12 mars 2029"
+        ],
+        "bonne_reponse_index": 2
+      },
+      {
+        "id": "F07",
+        "question": "Date butoir de mise à niveau pour les anciens titulaires (cat. I à IV) :",
+        "propositions": [
+          "31 décembre 2026",
+          "1ᵉʳ janvier 2027",
+          "12 mars 2029",
+          "31 décembre 2030"
+        ],
+        "bonne_reponse_index": 2
+      },
+      {
+        "id": "F08",
+        "question": "Nombre de catégories d'attestation d'aptitude dans le nouveau régime :",
+        "propositions": [
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "bonne_reponse_index": 2
+      },
+      {
+        "id": "F09",
+        "question": "La catégorie A1 couvre :",
+        "propositions": [
+          "Tous équipements fluorés et HC, sans limite de charge",
+          "Uniquement les charges < 3 kg",
+          "Uniquement les véhicules",
+          "Uniquement la récupération"
+        ],
+        "bonne_reponse_index": 0
+      },
+      {
+        "id": "F10",
+        "question": "La catégorie A2 est limitée à une charge inférieure à :",
+        "propositions": [
+          "1 kg",
+          "2 kg",
+          "3 kg (ou 6 kg si scellé)",
+          "10 kg"
+        ],
+        "bonne_reponse_index": 2
+      },
+      {
+        "id": "F11",
+        "question": "La catégorie B concerne quel fluide ?",
+        "propositions": [
+          "Les HFC",
+          "Le CO₂ (R-744)",
+          "L'ammoniac (R-717)",
+          "Les hydrocarbures"
+        ],
+        "bonne_reponse_index": 1
+      },
+      {
+        "id": "F12",
+        "question": "La catégorie C concerne quel fluide ?",
+        "propositions": [
+          "Les HFO",
+          "Le CO₂",
+          "L'ammoniac (R-717)",
+          "Le R-32"
+        ],
+        "bonne_reponse_index": 2
+      },
+      {
+        "id": "F13",
+        "question": "Classification de sécurité de l'ammoniac :",
+        "propositions": [
+          "A1",
+          "A2L",
+          "A3",
+          "B2L (toxique + faiblement inflammable)"
+        ],
+        "bonne_reponse_index": 3
+      },
+      {
+        "id": "F14",
+        "question": "Risque mécanique principal du CO₂ en transcritique :",
+        "propositions": [
+          "Inflammabilité",
+          "Très haute pression (jusqu'à 120 bar)",
+          "Toxicité élevée",
+          "Corrosion des cuivres"
+        ],
+        "bonne_reponse_index": 1
+      },
+      {
+        "id": "F15",
+        "question": "La catégorie D permet :",
+        "propositions": [
+          "Toutes les activités sur tous fluides",
+          "Le contrôle d'étanchéité uniquement",
+          "La récupération uniquement (HFC/HFO, charge < 3 kg)",
+          "Les véhicules uniquement"
+        ],
+        "bonne_reponse_index": 2
+      },
+      {
+        "id": "F16",
+        "question": "La catégorie E permet :",
+        "propositions": [
+          "L'installation complète",
+          "Le contrôle d'étanchéité uniquement",
+          "La récupération uniquement",
+          "Les fluides naturels"
+        ],
+        "bonne_reponse_index": 1
+      },
+      {
+        "id": "F17",
+        "question": "Correspondance ancienne cat. I → nouvelle catégorie :",
+        "propositions": [
+          "A1",
+          "A2",
+          "D",
+          "E"
+        ],
+        "bonne_reponse_index": 0
+      },
+      {
+        "id": "F18",
+        "question": "Correspondance ancienne cat. III → nouvelle catégorie :",
+        "propositions": [
+          "A1",
+          "A2",
+          "D",
+          "E"
+        ],
+        "bonne_reponse_index": 2
+      },
+      {
+        "id": "F19",
+        "question": "Pour avoir l'attestation de capacité, l'entreprise doit AU MINIMUM :",
+        "propositions": [
+          "Avoir un siège en France",
+          "Avoir au moins un salarié titulaire de l'aptitude",
+          "Être de plus de 10 salariés",
+          "Avoir 5 ans d'ancienneté"
+        ],
+        "bonne_reponse_index": 1
+      },
+      {
+        "id": "F20",
+        "question": "Le BAC PRO MFER prépare à quelle catégorie d'aptitude ?",
+        "propositions": [
+          "Cat. V — véhicules",
+          "Cat. E — étanchéité seule",
+          "Cat. A1 — tous équipements",
+          "Cat. D — récupération seule"
+        ],
+        "bonne_reponse_index": 2
+      }
+    ]
+  }
+}
