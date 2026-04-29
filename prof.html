@@ -937,8 +937,11 @@
 
 <script>
 // ================== CONFIG ==================
-const GAS_URL = window.GAS_URL || localStorage.getItem('gas_url') || prompt('Colle l\'URL Apps Script (déploiement Web App) :') || '';
-if (GAS_URL) localStorage.setItem('gas_url', GAS_URL);
+// URL Apps Script déployée (Web App, accès anonyme requis)
+// Si tu redéploies, remplace cette constante puis re-push sur GitHub.
+const GAS_URL_DEFAUT = 'https://script.google.com/macros/s/AKfycbxnaWG4Di3vg5lfCx3qJp3tpzLR6vhWJ-PIXs4mZHrQPwJJ1-3_sofjtcOCj9tL9Ev2OQ/exec';
+const GAS_URL = window.GAS_URL || localStorage.getItem('gas_url') || GAS_URL_DEFAUT;
+localStorage.setItem('gas_url', GAS_URL);
 const ELEVE_URL = window.ELEVE_URL || localStorage.getItem('eleve_url') ||
   (location.href.replace(/prof\.html.*$/, 'eleve.html') + '?gas=' + encodeURIComponent(GAS_URL));
 localStorage.setItem('eleve_url', ELEVE_URL);

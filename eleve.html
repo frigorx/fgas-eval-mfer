@@ -289,7 +289,8 @@
 
 <script>
 // ================== CONFIG ==================
-const GAS_URL = window.GAS_URL || localStorage.getItem('gas_url') || '';
+const GAS_URL_DEFAUT = 'https://script.google.com/macros/s/AKfycbxnaWG4Di3vg5lfCx3qJp3tpzLR6vhWJ-PIXs4mZHrQPwJJ1-3_sofjtcOCj9tL9Ev2OQ/exec';
+const GAS_URL = window.GAS_URL || localStorage.getItem('gas_url') || GAS_URL_DEFAUT;
 const POLL_INTERVAL = 2000;
 const HEARTBEAT_INTERVAL = 8000;
 
