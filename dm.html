@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>F-Gas III — DM BAC PRO MFER · inerWeb Édu</title>
+<style>
+:root {
+  --bleu: #1b3a63;
+  --bleu-fonce: #142848;
+  --orange: #ff6b35;
+  --orange-clair: #ffe8de;
+  --vert: #16a34a;
+  --rouge: #dc2626;
+  --gris-clair: #f5f7fa;
+  --gris: #6b7280;
+  --texte: #1f2937;
+  --bord: #e5e7eb;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; font-size: 16px; background: var(--gris-clair); color: var(--texte); }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+h1, h2, h3, h4 { font-family: 'Trebuchet MS', sans-serif; font-weight: bold; color: var(--bleu); margin: 0; }
+
+/* ===== ÉCRAN GARDE / AUTH ===== */
+.ecran { position: fixed; inset: 0; display: none; flex-direction: column; overflow-y: auto; }
+.ecran.actif { display: flex; }
+
+.garde {
+  background: var(--bleu);
+  color: white;
+  padding: 24px 20px;
+  position: relative;
+  min-height: 100vh;
+}
+.garde::before {
+  content: ''; position: fixed; top: 0; bottom: 0; left: 0; width: 8px;
+  background: var(--orange);
+}
+.logo-bloc { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.logo-flocon { font-size: 36px; color: var(--orange); }
+.logo-text { font-family: 'Trebuchet MS', sans-serif; font-weight: bold; font-size: 26px; color: white; }
+.cartouche-edu { background: var(--orange); color: white; padding: 4px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; }
+.surtitre { color: var(--orange); font-size: 12px; letter-spacing: 2px; margin: 16px 0 8px; }
+.titre-garde { font-size: 22px; line-height: 1.25; color: white; margin-bottom: 12px; }
+.soustitre { color: var(--orange); font-style: italic; font-size: 16px; margin-bottom: 20px; }
+.signature-garde { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 16px; }
+
+/* ===== FORMULAIRES ===== */
+.form-bloc {
+  background: white;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 14px;
+  color: var(--texte);
+}
+.form-titre { font-size: 16px; font-weight: bold; color: var(--bleu); margin-bottom: 12px; }
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 2px solid var(--bord);
+  border-radius: 8px;
+  font-family: inherit;
+  background: white;
+  color: var(--texte);
+  margin-bottom: 8px;
+}
+.form-input:focus { outline: none; border-color: var(--orange); }
+.form-help { font-size: 13px; color: var(--gris); margin-top: 4px; }
+
+.bouton-classe {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  background: white;
+  color: var(--bleu);
+  border: 2px solid var(--bleu);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bouton-classe:active { background: var(--bleu); color: white; }
+.bouton-classe.selected { background: var(--bleu); color: white; }
+
+.btn-action {
+  width: 100%;
+  padding: 14px;
+  font-size: 17px;
+  font-weight: bold;
+  background: var(--orange);
+  color: white;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+.btn-action:active { background: #e0552a; }
+.btn-action[disabled] { background: var(--gris); cursor: not-allowed; }
+
+.btn-secondaire {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  background: white;
+  color: var(--bleu);
+  border: 2px solid var(--bleu);
+  border-radius: 8px;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.message-info {
+  background: var(--orange-clair);
+  border-left: 4px solid var(--orange);
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: var(--texte);
+}
+.message-erreur {
+  background: #fef2f2;
+  border-left: 4px solid var(--rouge);
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: var(--rouge);
+}
+
+/* ===== ÉCRAN DM SPLIT-SCREEN ===== */
+.dm-conteneur {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--gris-clair);
+}
+.dm-haut {
+  flex: 0 0 50%;
+  background: white;
+  overflow-y: auto;
+  border-bottom: 4px solid var(--orange);
+  padding: 16px;
+  position: relative;
+}
+.dm-haut.cache .diapo-contenu { display: none; }
+.dm-haut.cache::after {
+  content: '👁 Diapo masquée — clique sur 📖 pour la revoir';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(245,247,250,0.95);
+  color: var(--gris);
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+  padding: 16px;
+}
+.dm-bas {
+  flex: 1 1 50%;
+  background: var(--gris-clair);
+  overflow-y: auto;
+  padding: 16px;
+  border-top: 1px solid var(--bord);
+}
+
+.diapo-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  color: var(--gris);
+}
+.diapo-header .pagination { margin-left: auto; }
+.diapo-titre { font-size: 18px; line-height: 1.3; color: var(--bleu); margin-bottom: 4px; }
+.diapo-soustitre { font-size: 14px; color: var(--orange); font-style: italic; margin-bottom: 12px; }
+
+.card-diapo {
+  background: var(--gris-clair);
+  border-left: 4px solid var(--bleu);
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.card-diapo.orange { border-left-color: var(--orange); }
+.card-diapo.vert { border-left-color: var(--vert); }
+.card-diapo h4 { font-size: 15px; margin-bottom: 6px; }
+.card-diapo ul { padding-left: 18px; margin: 6px 0; }
+.card-diapo li { margin-bottom: 3px; }
+
+.encart-retenir {
+  background: var(--orange-clair);
+  border-left: 4px solid var(--orange);
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.question-bloc {
+  background: white;
+  border: 2px solid var(--bord);
+  border-radius: 10px;
+  padding: 16px;
+}
+.question-numero {
+  display: inline-block;
+  background: var(--bleu);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.question-numero.phase2 { background: var(--orange); }
+.question-texte { font-size: 16px; line-height: 1.4; color: var(--texte); margin-bottom: 14px; font-weight: 500; }
+
+.choix {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  background: white;
+  border: 2px solid var(--bord);
+  border-radius: 8px;
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--texte);
+  cursor: pointer;
+}
+.choix:active { background: var(--gris-clair); }
+.choix.bonne { background: #dcfce7; border-color: var(--vert); color: #14532d; }
+.choix.mauvaise { background: #fee2e2; border-color: var(--rouge); color: #7f1d1d; }
+.choix.disabled { pointer-events: none; opacity: 0.6; }
+
+.feedback {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.feedback.bonne { background: #dcfce7; border-left: 3px solid var(--vert); color: #14532d; }
+.feedback.mauvaise { background: #fee2e2; border-left: 3px solid var(--rouge); color: #7f1d1d; }
+
+.btn-voir-diapo {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: var(--bleu);
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.btn-suivant {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: var(--orange);
+  color: white;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.barre-progression {
+  height: 6px;
+  background: var(--bord);
+  border-radius: 3px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.barre-progression .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--bleu), var(--orange));
+  transition: width 0.3s;
+}
+.compteur-haut {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--gris);
+  margin-bottom: 6px;
+}
+
+/* ===== ÉCRAN RÉSULTAT ===== */
+.resultat {
+  background: var(--bleu);
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+  min-height: 100vh;
+}
+.resultat .grosse-note {
+  font-size: 80px;
+  font-weight: bold;
+  color: var(--orange);
+  line-height: 1;
+  margin: 20px 0;
+}
+.resultat .grosse-note .denom { font-size: 40px; color: white; }
+.resultat-stats {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 16px;
+  margin: 16px 0;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255,107,53,0.2);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: rot 1s linear infinite;
+  margin: 30px auto;
+}
+@keyframes rot { to { transform: rotate(360deg); } }
+
+.footer-mini {
+  text-align: center;
+  font-size: 11px;
+  color: var(--gris);
+  padding: 10px;
+}
+
+@media (min-height: 700px) {
+  .titre-garde { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== ÉCRAN 1 : GARDE ===== -->
+<div class="ecran actif" id="ecran-garde">
+  <div class="garde">
+    <div class="logo-bloc">
+      <span class="logo-flocon">❄</span>
+      <span class="logo-text">inerWeb</span>
+      <span class="cartouche-edu">Édu</span>
+    </div>
+    <div class="surtitre">DEVOIR MAISON · BAC PRO MFER</div>
+    <h1 class="titre-garde">La réforme de l'habilitation à la manipulation des fluides frigorigènes</h1>
+    <div class="soustitre">Ce qui change avec les arrêtés du 21 novembre 2025</div>
+
+    <div class="form-bloc">
+      <div class="form-titre">1️⃣ Choisis ta classe</div>
+      <button class="bouton-classe" data-classe="1IFCA">🎓 1 IFCA</button>
+      <button class="bouton-classe" data-classe="2IFCA">🎓 2 IFCA</button>
+      <button class="bouton-classe" data-classe="2TNE">🎓 2 TNE</button>
+      <button class="bouton-classe" data-classe="1MFER">🎓 1 MFER</button>
+      <button class="bouton-classe" data-classe="TMFER">🎓 T MFER</button>
+      <button class="bouton-classe" data-classe="TPCVC">🎓 TP CVC</button>
+    </div>
+
+    <div class="signature-garde">F. Henninot — LP Privé Jacques Raynaud, Campus ÉQUATIO — Marseille</div>
+  </div>
+</div>
+
+<!-- ===== ÉCRAN 2 : LOGIN ===== -->
+<div class="ecran" id="ecran-login">
+  <div class="garde">
+    <div class="logo-bloc">
+      <span class="logo-flocon">❄</span>
+      <span class="logo-text">inerWeb</span>
+      <span class="cartouche-edu">Édu</span>
+    </div>
+    <div class="surtitre">CONNEXION</div>
+    <h1 class="titre-garde" id="login-classe-affichee">Classe : —</h1>
+
+    <div id="login-erreur"></div>
+
+    <div class="form-bloc">
+      <div class="form-titre">2️⃣ Ton pseudo</div>
+      <input type="text" class="form-input" id="login-pseudo" placeholder="FHENN" autocapitalize="characters" autocomplete="off">
+      <div class="form-help">Initiale du prénom + 4 lettres du nom (en majuscules). Si déjà pris, ajoute la 5ᵉ lettre.</div>
+    </div>
+
+    <div class="form-bloc">
+      <div class="form-titre">3️⃣ Ton mot de passe</div>
+      <input type="password" class="form-input" id="login-mdp" placeholder="Mot de passe">
+      <div class="form-help">Première fois ? Mot de passe = nom de ta classe (ex: <strong id="login-mdp-defaut">1MFER</strong>).</div>
+    </div>
+
+    <button class="btn-action" id="btn-connexion">Se connecter</button>
+    <button class="btn-secondaire" id="btn-creer-compte">Première fois — Créer mon compte</button>
+    <button class="btn-secondaire" id="btn-retour-classe">← Changer de classe</button>
+  </div>
+</div>
+
+<!-- ===== ÉCRAN 3 : CHARGEMENT ===== -->
+<div class="ecran" id="ecran-chargement">
+  <div class="garde" style="text-align:center;">
+    <div class="logo-bloc" style="justify-content:center;">
+      <span class="logo-flocon">❄</span>
+      <span class="logo-text">inerWeb</span>
+      <span class="cartouche-edu">Édu</span>
+    </div>
+    <h1 class="titre-garde" style="text-align:center;">Préparation du DM…</h1>
+    <div class="spinner"></div>
+    <div id="chargement-message" class="soustitre" style="text-align:center;">Déchiffrement des questions…</div>
+  </div>
+</div>
+
+<!-- ===== ÉCRAN 4 : DM SPLIT-SCREEN ===== -->
+<div class="ecran" id="ecran-dm">
+  <div class="dm-conteneur">
+    <!-- HAUT : DIAPO -->
+    <div class="dm-haut" id="dm-haut">
+      <div class="diapo-contenu" id="diapo-contenu">
+        <!-- Rempli dynamiquement -->
+      </div>
+    </div>
+
+    <!-- BAS : QUESTION -->
+    <div class="dm-bas" id="dm-bas">
+      <div class="compteur-haut">
+        <span id="compteur-question">Question 1 / 20</span>
+        <span id="compteur-consultations">📖 ×0</span>
+      </div>
+      <div class="barre-progression"><div class="fill" id="barre-fill" style="width:0%"></div></div>
+      <button class="btn-voir-diapo" id="btn-voir-diapo">📖 Revoir la diapo (2 sec)</button>
+      <div class="question-bloc" id="question-bloc">
+        <!-- Rempli dynamiquement -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ÉCRAN 5 : RÉSULTAT ===== -->
+<div class="ecran" id="ecran-resultat">
+  <div class="resultat">
+    <div class="logo-bloc" style="justify-content:center;">
+      <span class="logo-flocon">❄</span>
+      <span class="logo-text">inerWeb</span>
+      <span class="cartouche-edu">Édu</span>
+    </div>
+    <div class="surtitre">RÉSULTAT</div>
+    <h1 class="titre-garde" style="color:white;text-align:center;">DM terminé !</h1>
+    <div class="grosse-note"><span id="resultat-note">0</span><span class="denom">/20</span></div>
+    <div id="resultat-pseudo" style="font-size:18px;margin-bottom:8px;">—</div>
+    <div class="resultat-stats" id="resultat-stats"></div>
+    <button class="btn-action" id="btn-recommencer">🔄 Refaire le DM</button>
+    <button class="btn-secondaire" style="background:transparent;color:white;border-color:white;" id="btn-quitter">Quitter</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ============== CONFIG ==============
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbySyF72l7HyQJvkLDLrkWXnK4mGWmMALK3k6Bs23QnuNJosEFc5bWO-MygETrvXOlPF0w/exec';
+// ⚠️ À remplacer après déploiement de Code.gs.
+
+const QUESTIONS_ENC_URL = 'data/dm-questions.enc';
+
+const NOMS_CLASSES = {
+  '1IFCA': '1 IFCA', '2IFCA': '2 IFCA', '2TNE': '2 TNE',
+  '1MFER': '1 MFER', 'TMFER': 'T MFER', 'TPCVC': 'TP CVC'
+};
+
+// ============== ÉTAT GLOBAL ==============
+let etat = {
+  classe: null,
+  pseudo: null,
+  mode: 'leger',
+  codeAes: 'FGAS2026-MFER',
+  questions: null,
+  questionsAffichees: [],
+  diapos: [],
+  indexQuestion: 0,
+  reponses: [],
+  nbCorrectes: 0,
+  nbConsultDiapo: 0,
+  tempsDebut: 0,
+  devtoolsOuvert: false,
+  diapoVisible: true
+};
+
+// ============== UTILITAIRES ==============
+function ecran(id) {
+  document.querySelectorAll('.ecran').forEach(e => e.classList.remove('actif'));
+  document.getElementById(id).classList.add('actif');
+}
+
+async function appelApi(action, params = {}, methode = 'POST') {
+  const url = APPS_SCRIPT_URL + '?action=' + action;
+  const opts = { method: methode, redirect: 'follow' };
+  if (methode === 'POST') {
+    opts.body = JSON.stringify(params);
+    opts.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
+  }
+  try {
+    const r = await fetch(url, opts);
+    return await r.json();
+  } catch (e) {
+    return { ok: false, error: 'Erreur réseau : ' + e.message };
+  }
+}
+
+function afficherErreur(idElt, message) {
+  const elt = document.getElementById(idElt);
+  if (!elt) return;
+  if (!message) { elt.innerHTML = ''; return; }
+  elt.innerHTML = '<div class="message-erreur">' + message + '</div>';
+}
+
+function afficherInfo(idElt, message) {
+  const elt = document.getElementById(idElt);
+  if (!elt) return;
+  if (!message) { elt.innerHTML = ''; return; }
+  elt.innerHTML = '<div class="message-info">' + message + '</div>';
+}
+
+// ============== DÉCHIFFREMENT AES-GCM ==============
+async function dechiffrerQuestions(blobBase64, motDePasse) {
+  const blob = JSON.parse(atob(blobBase64));
+  const salt = Uint8Array.from(atob(blob.salt), c => c.charCodeAt(0));
+  const iv = Uint8Array.from(atob(blob.iv), c => c.charCodeAt(0));
+  const ct = Uint8Array.from(atob(blob.ct), c => c.charCodeAt(0));
+  const enc = new TextEncoder();
+  const baseKey = await crypto.subtle.importKey(
+    'raw', enc.encode(motDePasse), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: blob.iter, hash: 'SHA-256' },
+    baseKey,
+    { name: 'AES-GCM', length: 256 },
+    false, ['decrypt']);
+  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+// ============== HMAC SIDE-CLIENT ==============
+async function calculerHmacClient(message, secret) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(message));
+  return btoa(String.fromCharCode(...new Uint8Array(sig)));
+}
+
+// HMAC secret côté client = secret partagé. Idéalement renvoyé par le serveur après login.
+// Pour simplifier on utilise une chaîne unique embarquée (à retrouver dans Code.gs).
+const HMAC_SECRET_CLIENT = 'inerWeb-FH-2026-fgas-secret-hmac-key';
+
+// ============== DÉTECTION DEVTOOLS ==============
+(function detectDevTools() {
+  const seuil = 160;
+  setInterval(() => {
+    const ouvert = (window.outerWidth - window.innerWidth) > seuil ||
+                   (window.outerHeight - window.innerHeight) > seuil;
+    if (ouvert && !etat.devtoolsOuvert) {
+      etat.devtoolsOuvert = true;
+      if (etat.classe && etat.pseudo) {
+        appelApi('log_event', {
+          type: 'DEVTOOLS_OUVERT',
+          classe: etat.classe,
+          pseudo: etat.pseudo,
+          message: 'DevTools détecté pendant le DM'
+        });
+      }
+    }
+  }, 1000);
+})();
+
+// ============== DIAPOS (contenu en clair, charte PDF) ==============
+const DIAPOS_CONTENU = {
+  2: {
+    titre: "Pourquoi cette réforme ?",
+    soustitre: "Trois moteurs européens et un objectif climatique",
+    cards: [
+      { type: 'bleu', titre: 'Règlement F-Gas III (UE) 2024/573',
+        contenu: "L'Europe accélère la sortie des HFC à fort PRP. Le règlement révise et durcit les conditions de mise sur le marché des fluides fluorés depuis le 11 mars 2024." },
+      { type: 'orange', titre: 'Élargissement aux fluides naturels',
+        contenu: "CO₂ · NH₃ · Hydrocarbures<br>Le règlement d'exécution (UE) 2024/2215 intègre dans le périmètre obligatoire les fluides naturels comme le R-744, le R-717 et les hydrocarbures (R-290…)." },
+      { type: 'vert', titre: 'Compétences renforcées',
+        contenu: "Sécurité + environnement<br>Mieux former les techniciens face aux risques propres aux nouveaux fluides : haute pression du CO₂, toxicité de l'ammoniac, inflammabilité des A2L et A3." }
+    ],
+    retenir: "💡 Le système d'attestation est entièrement remis à plat — pour les techniciens comme pour les entreprises."
+  },
+  3: {
+    titre: "Deux attestations à ne pas confondre",
+    soustitre: "Aptitude = la personne ; Capacité = l'entreprise",
+    cards: [
+      { type: 'bleu', titre: '👷 Attestation d\'APTITUDE',
+        contenu: "<em>Personne physique — le technicien</em><ul><li>Délivrée à : une personne (le technicien)</li><li>Valable : <strong>7 ans</strong> (nouveau régime)</li><li>Renouvellement : formation de remise à niveau</li><li>Délivrée par : organisme formateur certifié</li><li>Sans elle : interdiction de manipuler les fluides</li></ul>" },
+      { type: 'orange', titre: '🏢 Attestation de CAPACITÉ',
+        contenu: "<em>Personne morale — l'entreprise</em><ul><li>Délivrée à : une entreprise</li><li>Valable : <strong>5 ans</strong></li><li>Renouvellement : audit + dossier complet</li><li>Délivrée par : organisme agréé (DEKRA, SOCOTEC, BV…)</li><li>Conditions : personnel apte + outillage + traçabilité</li></ul>" }
+    ],
+    retenir: "💡 On ne peut pas obtenir de capacité sans avoir au moins un salarié titulaire de l'aptitude."
+  },
+  4: {
+    titre: "Le calendrier de la réforme",
+    soustitre: "Quatre dates à retenir",
+    cards: [
+      { type: 'bleu', titre: '📅 6 décembre 2025 — Publication au JO',
+        contenu: "Parution des deux arrêtés du 21 novembre 2025 (aptitude + capacité)." },
+      { type: 'orange', titre: '📅 31 décembre 2026 — Fin du transitoire',
+        contenu: "Dernier jour pour délivrer une attestation selon l'ancien arrêté de 2008." },
+      { type: 'orange', titre: '📅 1ᵉʳ janvier 2027 — Nouveau régime obligatoire',
+        contenu: "Toutes les nouvelles attestations suivent les arrêtés de 2025." },
+      { type: 'bleu', titre: '📅 12 mars 2029 — Date butoir',
+        contenu: "Mise à niveau ponctuelle obligatoire pour les anciens titulaires (cat. I à IV)." }
+    ],
+    retenir: "⚠️ Aujourd'hui (mai 2026) : on est en pleine période transitoire — l'ancien et le nouveau cohabitent."
+  },
+  5: {
+    titre: "Avant / Après : une logique différente",
+    soustitre: "Le critère change : la charge → le type de fluide",
+    cards: [
+      { type: 'bleu', titre: 'AVANT (arrêté de 2008)',
+        contenu: "<em>Catégories I, II, III, IV, V</em><ul><li>Critère principal : <strong>la charge en fluide</strong> (≥ ou < 2 kg)</li><li>Périmètre : essentiellement HFC</li><li>HC, CO₂ et NH₃ peu encadrés</li><li>Pas de durée de validité — attestation à vie</li><li>Pas de remise à niveau obligatoire</li></ul>" },
+      { type: 'orange', titre: 'APRÈS (arrêté du 21 nov. 2025)',
+        contenu: "<em>Catégories A1, A2, B, C, D, E, V</em><ul><li>Critère principal : <strong>le type de fluide</strong> (fluoré, HC, CO₂, NH₃)</li><li>Périmètre élargi : HFC + HFO + HC + CO₂ + NH₃</li><li>Sécurité spécifique pour chaque famille</li><li>Validité limitée à <strong>7 ans</strong></li><li>Remise à niveau périodique obligatoire</li></ul>" }
+    ],
+    retenir: "💡 On passe d'une logique « combien de fluide » à une logique « quel fluide »."
+  },
+  6: {
+    titre: "Les sept catégories d'aptitude",
+    soustitre: "Vue d'ensemble",
+    cards: [
+      { type: 'bleu', titre: 'A1 — Tous équipements',
+        contenu: "HFC, HFO, hydrocarbures — sans limite de charge" },
+      { type: 'bleu', titre: 'A2 — Petite charge',
+        contenu: "Mêmes activités que A1, charge < 3 kg (ou 6 kg si scellé)" },
+      { type: 'vert', titre: 'B — CO₂ (R-744)',
+        contenu: "Installation, maintenance, contrôle d'étanchéité" },
+      { type: 'vert', titre: 'C — Ammoniac (R-717)',
+        contenu: "Installation, maintenance, contrôle d'étanchéité" },
+      { type: 'orange', titre: 'D — Récupération seule',
+        contenu: "HFC + HFO, charge < 3 kg" },
+      { type: 'orange', titre: 'E — Étanchéité seule',
+        contenu: "Contrôle d'étanchéité sur installations HFC/HFO" },
+      { type: 'orange', titre: 'V — Véhicules',
+        contenu: "Climatisations automobiles et engins" }
+    ],
+    retenir: "💡 A1 et A2 = les plus courantes en froid commercial et CVC. B et C = fluides naturels (industrie)."
+  },
+  7: {
+    titre: "Catégories A1 et A2",
+    soustitre: "Le tronc commun — fluides fluorés + hydrocarbures",
+    cards: [
+      { type: 'bleu', titre: '🔧 A1 — Tous équipements (sans limite de charge)',
+        contenu: "<strong>Activités couvertes</strong><ul><li>✓ Installation</li><li>✓ Réparation et maintenance</li><li>✓ Contrôle d'étanchéité</li><li>✓ Récupération du fluide</li><li>✓ Mise hors service</li></ul><strong>Fluides : HFC · HFO · hydrocarbures</strong>" },
+      { type: 'bleu', titre: '⚙️ A2 — Petite charge (< 3 kg ou < 6 kg si scellé)',
+        contenu: "<strong>Activités couvertes</strong><ul><li>✓ Mêmes que A1</li><li>✓ Limitées aux équipements de petite charge</li><li>✓ Splits CVC, vitrines, monoblocs</li><li>✗ Pas de centrales positives/négatives</li><li>✗ Pas de groupes industriels</li></ul><strong>Fluides : HFC · HFO · hydrocarbures</strong>" }
+    ],
+    retenir: "💡 Sous-divisions FF (fluorés seuls) · HC (hydrocarbures seuls) · FF & HC (les deux)."
+  },
+  8: {
+    titre: "Catégories B et C : les fluides naturels",
+    soustitre: "CO₂ et ammoniac — désormais dans le périmètre",
+    cards: [
+      { type: 'vert', titre: '🧪 B — CO₂ (R-744)',
+        contenu: "<em>Sécurité : A1 — non inflammable</em><ul><li>Très haute pression — jusqu'à <strong>120 bar</strong> en transcritique</li><li>Risque mécanique d'éclatement</li><li><strong>Asphyxie</strong> en espace confiné</li><li>Outillage et raccords spécifiques</li><li>Détection CO₂ adaptée</li></ul>" },
+      { type: 'orange', titre: '🔥 C — Ammoniac (R-717)',
+        contenu: "<em>Sécurité : <strong>B2L</strong> — toxique + faiblement inflammable</em><ul><li><strong>Toxicité élevée</strong> — odeur perceptible avant danger</li><li>Faiblement inflammable (B2L)</li><li>Réagit à l'eau, ne pas mélanger</li><li>EPI : <strong>ARI</strong> + combinaison</li><li>Usage industriel principalement</li></ul>" }
+    ],
+    retenir: "💡 Une question au moins de l'épreuve A1/A2 portera sur le CO₂ et l'ammoniac."
+  },
+  9: {
+    titre: "Catégories D, E et V",
+    soustitre: "Cas particuliers — activités limitées",
+    cards: [
+      { type: 'orange', titre: '♻️ D — Récupération seule',
+        contenu: "<ul><li>Activité unique : récupérer le fluide d'un équipement en fin de vie</li><li>Limite : charge < 3 kg</li><li>Fluides : HFC + HFO uniquement</li><li>Typiquement : VHU, fin d'exploitation</li></ul>" },
+      { type: 'orange', titre: '🔍 E — Étanchéité seule',
+        contenu: "<ul><li>Activité unique : contrôle d'étanchéité</li><li>Pas d'intervention sur le circuit fluide</li><li>Fluides : HFC + HFO uniquement</li><li>Typiquement : prestations de contrôle périodique</li></ul>" },
+      { type: 'orange', titre: '🚗 V — Véhicules',
+        contenu: "<ul><li>Climatisations automobiles, engins, matériels du Code de la route</li><li>Camions et remorques frigorifiques</li><li>Démolisseurs VHU : récupération limitée (centre VHU agréé)</li><li><strong>Pas de remise à niveau périodique</strong> pour la cat. V</li></ul>" }
+    ]
+  },
+  10: {
+    titre: "La grande nouveauté : 7 ans + remise à niveau",
+    soustitre: "Fini l'attestation à vie",
+    cards: [
+      { type: 'bleu', titre: '⏱️ 7 ans de validité',
+        contenu: "Pour la nouvelle attestation d'aptitude. Renouvelable après formation." },
+      { type: 'orange', titre: 'Comment ça marche ?',
+        contenu: "<ol><li><strong>Formation initiale</strong> : examen théorique (QCM) + épreuve pratique</li><li><strong>Activité professionnelle</strong> pendant 7 ans</li><li><strong>Avant les 7 ans : remise à niveau</strong> (≈ 2 jours)</li><li><strong>Nouvelle période de 7 ans</strong> — renouvelable indéfiniment</li></ol>" }
+    ]
+  },
+  11: {
+    titre: "Et les anciens titulaires ?",
+    soustitre: "Ce qui s'applique aux attestations cat. I à IV",
+    cards: [
+      { type: 'bleu', titre: 'ℹ️ Vous avez déjà une attestation cat. I à IV ?',
+        contenu: "Elle reste valide pendant le transitoire — mais une mise à niveau ponctuelle est obligatoire <strong>avant le 12 mars 2029</strong>." },
+      { type: 'orange', titre: 'Correspondance ancienne → nouvelle catégorie',
+        contenu: "<table style='width:100%;font-size:13px;border-collapse:collapse'><tr><th style='border:1px solid #ddd;padding:4px'>Cat. I</th><td style='border:1px solid #ddd;padding:4px'>→ A1</td><td style='border:1px solid #ddd;padding:4px'>Tous équip.</td></tr><tr><th style='border:1px solid #ddd;padding:4px'>Cat. II</th><td style='border:1px solid #ddd;padding:4px'>→ A2</td><td style='border:1px solid #ddd;padding:4px'>< 3 / 6 kg</td></tr><tr><th style='border:1px solid #ddd;padding:4px'>Cat. III</th><td style='border:1px solid #ddd;padding:4px'>→ D</td><td style='border:1px solid #ddd;padding:4px'>Récup.</td></tr><tr><th style='border:1px solid #ddd;padding:4px'>Cat. IV</th><td style='border:1px solid #ddd;padding:4px'>→ E</td><td style='border:1px solid #ddd;padding:4px'>Étanch.</td></tr></table>" }
+    ],
+    retenir: "⚠️ Sans mise à niveau avant le 12 mars 2029, l'attestation devient invalide. Examen complet à repasser."
+  },
+  12: {
+    titre: "Comment se passe l'évaluation ?",
+    soustitre: "Tronc commun + spécifique selon la catégorie",
+    cards: [
+      { type: 'bleu', titre: '📘 Épreuve THÉORIQUE (lettre T)',
+        contenu: "<ul><li>Connaissances thermodynamiques de base</li><li>Réglementation F-Gas + code de l'environnement</li><li>Sécurité et environnement</li><li>A1/A2 : ≥ 1 question CO₂/NH₃</li><li>A1/A2 : ≥ 1 question efficacité énergétique</li><li>B/C : ≥ 1 question hydrocarbures</li></ul>" },
+      { type: 'orange', titre: '🔧 Épreuve PRATIQUE (lettre P)',
+        contenu: "<ul><li>Manipulation réelle avec outillage et EPI</li><li>Mise en œuvre des règles de sécurité</li><li>Tâches désignées par catégorie en annexe</li><li>Bonne tenue du registre et traçabilité</li><li>Examen du matériel et de sa bonne utilisation</li></ul>" }
+    ],
+    retenir: "💡 Pour A1, A2, B et C : tronc commun + partie spécifique à la catégorie."
+  },
+  13: {
+    titre: "L'impact sur la capacité (entreprise)",
+    soustitre: "Ce que doit faire votre futur employeur",
+    cards: [
+      { type: 'bleu', titre: '👥 Personnel apte',
+        contenu: "Au moins un salarié titulaire d'une attestation d'aptitude valide pour chaque catégorie d'activité." },
+      { type: 'bleu', titre: '🔧 Outillage conforme',
+        contenu: "Station de récupération, détecteur de fuite, balance, manomètres… avec <strong>étalonnage annuel</strong>." },
+      { type: 'bleu', titre: '📋 Traçabilité renforcée',
+        contenu: "Registre des fluides, fiches d'intervention, déclaration annuelle. <strong>Exigence-clé pour A1, A2 et D.</strong>" },
+      { type: 'orange', titre: '🛡️ Audits stricts',
+        contenu: "Inspection physique, vérification outillage et registres. Sanctions accélérées en cas de manquement grave." },
+      { type: 'orange', titre: '📅 Validité 5 ans',
+        contenu: "Renouvellement par dossier complet, à initier 2 à 3 mois avant l'expiration." },
+      { type: 'orange', titre: '♻️ Délai de garde 1 an',
+        contenu: "Tolérance d'un an pour les fluides récupérés non réutilisables, après la dernière intervention." }
+    ]
+  },
+  14: {
+    titre: "Concrètement, pour vous, élèves de MFER ?",
+    soustitre: "Trois choses à intégrer dès maintenant",
+    cards: [
+      { type: 'bleu', titre: '1️⃣ Vous préparez l\'attestation A1 (ex-cat. I)',
+        contenu: "Le BAC PRO MFER vise la nouvelle catégorie A1 : tous équipements, sans limite de charge. C'est le périmètre le plus large du métier." },
+      { type: 'orange', titre: '2️⃣ Apprenez les fluides naturels',
+        contenu: "L'épreuve comportera des questions sur le CO₂ et l'ammoniac. Connaître les classes A1/A2L/A3/B2L et les risques associés est désormais incontournable." },
+      { type: 'vert', titre: '3️⃣ La formation, c\'est pour la vie',
+        contenu: "Une fois en poste, remise à niveau tous les 7 ans. Ne pas le faire = ne plus pouvoir travailler." }
+    ]
+  }
+};
+
+function diapoVierge(numero) {
+  return {
+    titre: 'Diapo ' + numero,
+    soustitre: '',
+    cards: [{ type: 'bleu', titre: '', contenu: 'Contenu non disponible.' }]
+  };
+}
+
+function rendreDiapo(numDiapo) {
+  const d = DIAPOS_CONTENU[numDiapo] || diapoVierge(numDiapo);
+  let html = '<div class="diapo-header">';
+  html += '<span class="logo-flocon" style="font-size:18px;">❄</span>';
+  html += '<strong style="font-size:13px;color:var(--bleu)">inerWeb</strong>';
+  html += '<span class="cartouche-edu" style="font-size:11px;padding:2px 8px;">Édu</span>';
+  html += '<span class="pagination">' + numDiapo + ' / 16</span>';
+  html += '</div>';
+  html += '<h2 class="diapo-titre">' + d.titre + '</h2>';
+  if (d.soustitre) html += '<div class="diapo-soustitre">' + d.soustitre + '</div>';
+  d.cards.forEach(c => {
+    html += '<div class="card-diapo ' + (c.type === 'bleu' ? '' : c.type) + '">';
+    if (c.titre) html += '<h4>' + c.titre + '</h4>';
+    html += '<div>' + c.contenu + '</div>';
+    html += '</div>';
+  });
+  if (d.retenir) {
+    html += '<div class="encart-retenir">' + d.retenir + '</div>';
+  }
+  document.getElementById('diapo-contenu').innerHTML = html;
+}
+
+// ============== ÉCRAN GARDE — choix classe ==============
+document.querySelectorAll('.bouton-classe').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const classe = btn.dataset.classe;
+    etat.classe = classe;
+    document.getElementById('login-classe-affichee').textContent = 'Classe : ' + NOMS_CLASSES[classe];
+    document.getElementById('login-mdp-defaut').textContent = classe;
+    afficherErreur('login-erreur', '');
+    ecran('ecran-login');
+  });
+});
+
+document.getElementById('btn-retour-classe').addEventListener('click', () => {
+  etat.classe = null;
+  document.getElementById('login-pseudo').value = '';
+  document.getElementById('login-mdp').value = '';
+  ecran('ecran-garde');
+});
+
+// ============== LOGIN / CRÉATION COMPTE ==============
+document.getElementById('btn-connexion').addEventListener('click', async () => {
+  const pseudo = document.getElementById('login-pseudo').value.toUpperCase().trim();
+  const mdp = document.getElementById('login-mdp').value;
+  if (pseudo.length < 5) {
+    afficherErreur('login-erreur', 'Pseudo trop court (5 caractères minimum)');
+    return;
+  }
+  if (!mdp) {
+    afficherErreur('login-erreur', 'Saisis ton mot de passe');
+    return;
+  }
+  afficherInfo('login-erreur', 'Connexion en cours…');
+  const res = await appelApi('login', { classe: etat.classe, pseudo, mdp });
+  if (!res.ok) {
+    afficherErreur('login-erreur', res.error);
+    return;
+  }
+  if (!res.ouvert) {
+    afficherErreur('login-erreur', 'Le DM n\'est pas ouvert pour cette classe.');
+    return;
+  }
+  etat.pseudo = pseudo;
+  etat.mode = res.mode;
+  etat.codeAes = res.code_aes;
+  await lancerDM();
+});
+
+document.getElementById('btn-creer-compte').addEventListener('click', async () => {
+  const pseudo = document.getElementById('login-pseudo').value.toUpperCase().trim();
+  let mdp = document.getElementById('login-mdp').value;
+  if (pseudo.length < 5) {
+    afficherErreur('login-erreur', 'Pseudo trop court (5 caractères minimum)');
+    return;
+  }
+  if (!mdp) mdp = etat.classe; // mdp par défaut = classe
+  afficherInfo('login-erreur', 'Création du compte…');
+  const res = await appelApi('create_account', { classe: etat.classe, pseudo, mdp });
+  if (!res.ok) {
+    afficherErreur('login-erreur', res.error);
+    return;
+  }
+  // Login direct après création
+  document.getElementById('login-mdp').value = mdp;
+  document.getElementById('btn-connexion').click();
+});
+
+// ============== LANCEMENT DM ==============
+async function lancerDM() {
+  ecran('ecran-chargement');
+  document.getElementById('chargement-message').textContent = 'Téléchargement des questions…';
+  try {
+    const r = await fetch(QUESTIONS_ENC_URL);
+    if (!r.ok) throw new Error('Impossible de charger questions.enc');
+    const blob = await r.text();
+    document.getElementById('chargement-message').textContent = 'Déchiffrement…';
+    etat.questions = await dechiffrerQuestions(blob, etat.codeAes);
+  } catch (e) {
+    document.getElementById('chargement-message').innerHTML =
+      '<div class="message-erreur">Erreur : ' + e.message + '<br>Vérifie le mot de passe AES.</div>';
+    setTimeout(() => ecran('ecran-login'), 3000);
+    return;
+  }
+
+  // Filtrer questions selon mode
+  const phase1 = (etat.questions.phase1 || []).filter(q =>
+    etat.mode === 'habilitation' || q.niveau === 'leger'
+  );
+  const phase2 = (etat.questions.phase2 || []).filter(q =>
+    etat.mode === 'habilitation' || q.niveau === 'leger'
+  );
+
+  // Limites selon mode
+  const cible = etat.questions.modes[etat.mode];
+  const phase1Cible = cible.phase1;
+  const phase2Cible = cible.phase2;
+
+  // Tirage aléatoire si surplus
+  function piocher(arr, n) {
+    const copie = arr.slice();
+    for (let i = copie.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copie[i], copie[j]] = [copie[j], copie[i]];
+    }
+    return copie.slice(0, n);
+  }
+
+  const piochees1 = piocher(phase1, phase1Cible);
+  const piochees2 = piocher(phase2, phase2Cible);
+
+  // Trier phase1 par diapo (ordre pédagogique)
+  piochees1.sort((a, b) => (a.diapo || 0) - (b.diapo || 0));
+
+  // Mélanger ordre des choix de chaque question
+  function melangerChoix(q) {
+    const indices = q.choix.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    const nouveauxChoix = indices.map(i => q.choix[i]);
+    const nouvelleBonne = indices.indexOf(q.bonne_reponse);
+    return Object.assign({}, q, { choix: nouveauxChoix, bonne_reponse: nouvelleBonne });
+  }
+
+  etat.questionsAffichees = piochees1.concat(piochees2).map(melangerChoix);
+  etat.questionsAffichees.forEach((q, idx) => {
+    q._phase = idx < piochees1.length ? 1 : 2;
+  });
+
+  etat.indexQuestion = 0;
+  etat.reponses = [];
+  etat.nbCorrectes = 0;
+  etat.nbConsultDiapo = 0;
+  etat.tempsDebut = Date.now();
+
+  ecran('ecran-dm');
+  afficherQuestion();
+}
+
+// ============== AFFICHAGE QUESTION ==============
+function afficherQuestion() {
+  const q = etat.questionsAffichees[etat.indexQuestion];
+  const total = etat.questionsAffichees.length;
+  const numero = etat.indexQuestion + 1;
+
+  document.getElementById('compteur-question').textContent = 'Question ' + numero + ' / ' + total;
+  document.getElementById('compteur-consultations').textContent = '📖 ×' + etat.nbConsultDiapo;
+  document.getElementById('barre-fill').style.width = ((numero - 1) / total * 100) + '%';
+
+  // Afficher la diapo associée si phase 1
+  if (q._phase === 1 && q.diapo) {
+    rendreDiapo(q.diapo);
+    document.getElementById('dm-haut').classList.remove('cache');
+    etat.diapoVisible = true;
+    document.getElementById('btn-voir-diapo').style.display = 'block';
+    document.getElementById('btn-voir-diapo').textContent = '👁 Masquer la diapo';
+  } else {
+    // Phase 2 : pas de diapo
+    document.getElementById('diapo-contenu').innerHTML =
+      '<div style="text-align:center;padding:40px 20px;color:var(--gris)"><div style="font-size:40px">🎯</div><h3 style="color:var(--orange);margin-top:10px">QCM blanc</h3><p style="font-size:14px">Plus de diapo. Conditions proches de l\'examen.</p></div>';
+    document.getElementById('dm-haut').classList.remove('cache');
+    document.getElementById('btn-voir-diapo').style.display = 'none';
+  }
+
+  // Construire question
+  let html = '<div class="question-numero ' + (q._phase === 2 ? 'phase2' : '') + '">';
+  html += (q._phase === 2 ? '🎯 QCM blanc · ' : '') + 'Question ' + numero + '/' + total;
+  html += '</div>';
+  html += '<div class="question-texte">' + q.question + '</div>';
+  q.choix.forEach((c, i) => {
+    html += '<button class="choix" data-idx="' + i + '">' + c + '</button>';
+  });
+  html += '<div id="feedback-zone"></div>';
+
+  document.getElementById('question-bloc').innerHTML = html;
+
+  document.querySelectorAll('#question-bloc .choix').forEach(btn => {
+    btn.addEventListener('click', () => repondre(parseInt(btn.dataset.idx)));
+  });
+}
+
+// ============== RÉPONDRE ==============
+function repondre(idxChoix) {
+  const q = etat.questionsAffichees[etat.indexQuestion];
+  const correcte = idxChoix === q.bonne_reponse;
+  if (correcte) etat.nbCorrectes++;
+
+  etat.reponses.push({
+    id: q.id,
+    diapo: q.diapo || null,
+    phase: q._phase,
+    choix: idxChoix,
+    correcte: correcte,
+    nb_consult_diapo: etat.nbConsultDiapo
+  });
+
+  // Verrouiller tous les choix, marquer bonne/mauvaise
+  document.querySelectorAll('#question-bloc .choix').forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === q.bonne_reponse) btn.classList.add('bonne');
+    else if (i === idxChoix && !correcte) btn.classList.add('mauvaise');
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedback-zone');
+  if (correcte) {
+    fb.innerHTML = '<div class="feedback bonne">✅ <strong>Bonne réponse !</strong><br>' + (q.justification || '') + '</div>';
+  } else {
+    fb.innerHTML = '<div class="feedback mauvaise">❌ <strong>Mauvaise réponse.</strong><br>' + (q.justification || '') + '</div>';
+  }
+
+  // Bouton suivant
+  const btnSuiv = document.createElement('button');
+  btnSuiv.className = 'btn-suivant';
+  const estDerniere = etat.indexQuestion === etat.questionsAffichees.length - 1;
+  btnSuiv.textContent = estDerniere ? '🏁 Voir mon résultat' : 'Question suivante →';
+  btnSuiv.addEventListener('click', () => {
+    etat.indexQuestion++;
+    if (etat.indexQuestion >= etat.questionsAffichees.length) {
+      terminerDM();
+    } else {
+      afficherQuestion();
+    }
+  });
+  document.getElementById('question-bloc').appendChild(btnSuiv);
+  document.getElementById('dm-bas').scrollTop = document.getElementById('dm-bas').scrollHeight;
+}
+
+// ============== VOIR / MASQUER DIAPO (avec timer 2s) ==============
+let diapoTimer = null;
+document.getElementById('btn-voir-diapo').addEventListener('click', () => {
+  const haut = document.getElementById('dm-haut');
+  const btn = document.getElementById('btn-voir-diapo');
+  if (haut.classList.contains('cache')) {
+    // Réafficher
+    haut.classList.remove('cache');
+    etat.nbConsultDiapo++;
+    document.getElementById('compteur-consultations').textContent = '📖 ×' + etat.nbConsultDiapo;
+    btn.textContent = '👁 Masquer la diapo';
+    etat.diapoVisible = true;
+  } else {
+    // Masquer manuellement
+    if (diapoTimer) clearTimeout(diapoTimer);
+    haut.classList.add('cache');
+    btn.textContent = '📖 Revoir la diapo (2 sec)';
+    etat.diapoVisible = false;
+  }
+});
+
+// Auto-masquage 2s après que l'élève REVIENT à la question (focus dm-bas)
+document.getElementById('dm-bas').addEventListener('touchstart', autoMasquage);
+document.getElementById('dm-bas').addEventListener('mousedown', autoMasquage);
+function autoMasquage() {
+  if (!etat.diapoVisible) return;
+  if (diapoTimer) clearTimeout(diapoTimer);
+  diapoTimer = setTimeout(() => {
+    document.getElementById('dm-haut').classList.add('cache');
+    document.getElementById('btn-voir-diapo').textContent = '📖 Revoir la diapo (2 sec)';
+    etat.diapoVisible = false;
+  }, 2000);
+}
+
+// ============== TERMINER DM ==============
+async function terminerDM() {
+  ecran('ecran-chargement');
+  document.getElementById('chargement-message').textContent = 'Calcul de la note et envoi…';
+
+  const total = etat.questionsAffichees.length;
+  const dureeSec = Math.round((Date.now() - etat.tempsDebut) / 1000);
+  const note20 = Math.round((etat.nbCorrectes / total) * 20 * 100) / 100;
+  const scorePct = Math.round((etat.nbCorrectes / total) * 100);
+
+  // Calcul HMAC client
+  const donnees = etat.classe + ':' + etat.pseudo + ':' + etat.mode + ':' + note20 + ':' + scorePct + ':' + total + ':' + etat.nbCorrectes + ':' + dureeSec;
+  const hmac = await calculerHmacClient(donnees, HMAC_SECRET_CLIENT);
+
+  const res = await appelApi('submit_result', {
+    classe: etat.classe,
+    pseudo: etat.pseudo,
+    mode: etat.mode,
+    note_20: note20,
+    score_pct: scorePct,
+    nb_questions: total,
+    nb_correctes: etat.nbCorrectes,
+    duree_sec: dureeSec,
+    nb_consultations_diapo: etat.nbConsultDiapo,
+    devtools_ouvert: etat.devtoolsOuvert,
+    detail_questions: etat.reponses,
+    hmac_signature: hmac
+  });
+
+  // Affichage résultat
+  document.getElementById('resultat-note').textContent = note20.toFixed(2);
+  document.getElementById('resultat-pseudo').textContent = etat.pseudo + ' · ' + NOMS_CLASSES[etat.classe];
+  let stats = '';
+  stats += '<div>📊 Bonnes réponses : <strong>' + etat.nbCorrectes + ' / ' + total + '</strong> (' + scorePct + '%)</div>';
+  stats += '<div>⏱ Durée : <strong>' + Math.floor(dureeSec / 60) + ' min ' + (dureeSec % 60) + ' s</strong></div>';
+  stats += '<div>📖 Consultations diapo : <strong>' + etat.nbConsultDiapo + '</strong></div>';
+  stats += '<div>🎯 Mode : <strong>' + (etat.mode === 'habilitation' ? 'Examen blanc (40 q)' : 'DM léger (20 q)') + '</strong></div>';
+  if (res.ok && res.nb_tentatives) {
+    stats += '<div>🔄 Tentative N° <strong>' + res.nb_tentatives + '</strong></div>';
+  }
+  if (!res.ok) {
+    stats += '<div style="color:#fbbf24;margin-top:10px">⚠ ' + (res.error || 'Erreur d\'envoi — la note n\'a peut-être pas été enregistrée.') + '</div>';
+  }
+  document.getElementById('resultat-stats').innerHTML = stats;
+  ecran('ecran-resultat');
+}
+
+document.getElementById('btn-recommencer').addEventListener('click', () => lancerDM());
+document.getElementById('btn-quitter').addEventListener('click', () => {
+  etat = {
+    classe: null, pseudo: null, mode: 'leger', codeAes: 'FGAS2026-MFER',
+    questions: null, questionsAffichees: [], diapos: [],
+    indexQuestion: 0, reponses: [], nbCorrectes: 0, nbConsultDiapo: 0,
+    tempsDebut: 0, devtoolsOuvert: false, diapoVisible: true
+  };
+  document.getElementById('login-pseudo').value = '';
+  document.getElementById('login-mdp').value = '';
+  ecran('ecran-garde');
+});
+
+// ============== INIT ==============
+window.addEventListener('beforeunload', e => {
+  if (etat.indexQuestion > 0 && etat.indexQuestion < etat.questionsAffichees.length) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+</script>
+</body>
+</html>

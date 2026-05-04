@@ -1,6 +1,10 @@
-apps-script/.clasp.json
-apps-script/.clasprc.json
+apps-script-dm/.clasp.json
+apps-script-dm/.clasprc.json
 node_modules/
+package.json
+package-lock.json
+data/dm-questions.json
 *.log
+*.bak
 .DS_Store
 Thumbs.db

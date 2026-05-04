@@ -1,19 +1,54 @@
-# inerWeb Édu — Cours interactif F-Gas III
+# inerWeb Édu — F-Gas III · 2 modes d'évaluation
 
-Cours BAC PRO MFER format "Qui veut gagner des millions". Slides cours + checkpoints + QCM final noté /20. Élèves répondent sur smartphone, prof voit les stats live au tableau, anti-décrochage actif.
+Outils pédagogiques sur la réforme de l'habilitation à la manipulation des fluides frigorigènes (arrêtés du 21 nov. 2025).
+
+**2 modes complémentaires** :
+
+- 📺 **Mode cours live** (présentiel) : slides au vidéoprojecteur + tels élèves synchronisés. Format "Qui veut gagner des millions", anti-décrochage actif.
+- 🏠 **Mode DM maison** (asynchrone) : split-screen sur téléphone, 25 ou 40 questions, auth comptes, tableau de bord prof complet.
 
 ## Architecture
 
 ```
 fgas-eval-mfer/
-├── prof.html              ← page prof (slides + pilotage)
-├── eleve.html             ← page élève (smartphone)
+├── prof.html               ← MODE LIVE : page prof (slides + pilotage)
+├── eleve.html              ← MODE LIVE : page élève (smartphone)
+├── dm.html                 ← MODE DM : page élève split-screen
+├── tableau-bord.html       ← MODE DM : page prof (Notes / Comptes / Activité / Paramètres)
 ├── data/
-│   └── questions.json     ← 1 test + 17 checkpoints + 20 QCM final
+│   ├── questions.json      ← MODE LIVE : 1 test + 17 checkpoints + 20 QCM final
+│   └── dm-questions.enc    ← MODE DM : 50 questions chiffrées AES-GCM
 ├── apps-script/
-│   └── Code.gs            ← backend Google Sheet (à coller)
+│   └── Code.gs             ← MODE LIVE : backend Sheet
+├── apps-script-dm/
+│   ├── Code.gs             ← MODE DM : backend (15 routes, HMAC, lockout)
+│   └── appsscript.json
+├── PROCEDURE_PROF.md       ← Guide d'utilisation prof (mode DM)
+├── DEPLOIEMENT.md          ← Procédure technique
+├── TESTS.md                ← 20 scénarios de tests
 └── README.md
 ```
+
+## URLs publiques (GitHub Pages)
+
+- 📺 Mode live, prof : `https://frigorx.github.io/fgas-eval-mfer/prof.html`
+- 📺 Mode live, élève : `https://frigorx.github.io/fgas-eval-mfer/eleve.html?gas=<URL>`
+- 🏠 Mode DM, élève : `https://frigorx.github.io/fgas-eval-mfer/dm.html`
+- 🏠 Mode DM, prof : `https://frigorx.github.io/fgas-eval-mfer/tableau-bord.html`
+
+## Mode DM — Vue rapide
+
+- 6 classes : 1 IFCA · 2 IFCA · 2 TNE · 1 MFER · T MFER · TP CVC
+- Auth élève : pseudo (initiale + 4 lettres nom) + mdp (par défaut = nom de la classe)
+- Tentatives illimitées, dernière note écrase, compteur tentatives + consultations diapo
+- 2 modes : DM léger (20 q, 12 min) ou Examen blanc habilitation (40 q, 25 min)
+- Sécurité : AES-GCM (questions), HMAC (score), détection devtools, lockout 5 essais ratés, limite 40/classe
+
+Voir `PROCEDURE_PROF.md` pour le guide d'utilisation et `DEPLOIEMENT.md` pour la procédure technique.
+
+---
+
+## Mode LIVE (existant) — Documentation détaillée
 
 ## Déploiement (1ʳᵉ fois — 15 min)
 

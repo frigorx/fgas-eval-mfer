@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tableau de bord prof — F-Gas DM · inerWeb Édu</title>
+<style>
+:root {
+  --bleu: #1b3a63;
+  --bleu-fonce: #142848;
+  --orange: #ff6b35;
+  --orange-clair: #ffe8de;
+  --vert: #16a34a;
+  --rouge: #dc2626;
+  --jaune: #f59e0b;
+  --gris-clair: #f5f7fa;
+  --gris: #6b7280;
+  --texte: #1f2937;
+  --bord: #e5e7eb;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; background: var(--gris-clair); color: var(--texte); font-size: 15px; }
+h1, h2, h3 { font-family: 'Trebuchet MS', sans-serif; color: var(--bleu); margin: 0; }
+
+/* Header */
+.header {
+  background: var(--bleu);
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 4px solid var(--orange);
+}
+.header .logo-flocon { color: var(--orange); font-size: 28px; }
+.header .logo-text { font-family: 'Trebuchet MS', sans-serif; font-weight: bold; font-size: 22px; }
+.header .cartouche-edu { background: var(--orange); padding: 3px 10px; border-radius: 4px; font-size: 13px; font-weight: bold; }
+.header .titre-page { margin-left: 14px; font-size: 16px; opacity: 0.9; }
+.header .right { margin-left: auto; font-size: 13px; opacity: 0.8; }
+.header .right button { background: var(--orange); color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+/* Login */
+.login-bg {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--bleu) 0%, var(--bleu-fonce) 100%);
+  padding: 20px;
+}
+.login-card {
+  background: white; border-radius: 12px; padding: 32px; max-width: 400px; width: 100%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.login-card .logo-bloc { text-align: center; margin-bottom: 24px; }
+.login-card .logo-flocon { font-size: 48px; color: var(--orange); }
+.login-card .titre { text-align: center; margin-bottom: 24px; }
+.login-card input {
+  width: 100%; padding: 12px 14px; font-size: 16px; border: 2px solid var(--bord);
+  border-radius: 8px; margin-bottom: 12px; font-family: inherit;
+}
+.login-card input:focus { outline: none; border-color: var(--orange); }
+.login-card button {
+  width: 100%; padding: 14px; background: var(--orange); color: white; border: none;
+  border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
+}
+
+/* Sélecteur classe */
+.selecteur-classe {
+  padding: 30px 20px; max-width: 1200px; margin: 0 auto;
+}
+.selecteur-classe h2 { margin-bottom: 20px; font-size: 22px; }
+.grid-classes {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px;
+}
+.card-classe {
+  background: white; border: 2px solid var(--bleu); border-radius: 10px; padding: 20px;
+  cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.card-classe:hover { background: var(--bleu); color: white; transform: translateY(-2px); }
+.card-classe .nom { font-size: 22px; font-weight: bold; color: var(--bleu); margin-bottom: 8px; }
+.card-classe:hover .nom { color: white; }
+.card-classe .info { font-size: 13px; color: var(--gris); }
+.card-classe:hover .info { color: rgba(255,255,255,0.85); }
+.card-classe.toutes { background: var(--orange); color: white; border-color: var(--orange); }
+.card-classe.toutes .nom { color: white; }
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 4px; padding: 0 20px; background: white;
+  border-bottom: 2px solid var(--bord); position: sticky; top: 0; z-index: 10;
+}
+.tab {
+  padding: 12px 20px; cursor: pointer; font-weight: bold; color: var(--gris);
+  border-bottom: 3px solid transparent; user-select: none;
+}
+.tab:hover { color: var(--bleu); }
+.tab.actif { color: var(--bleu); border-bottom-color: var(--orange); }
+.tab .badge { background: var(--orange); color: white; padding: 1px 8px; border-radius: 10px; font-size: 11px; margin-left: 4px; }
+
+/* Contenu onglets */
+.onglet-contenu { padding: 20px; max-width: 1400px; margin: 0 auto; }
+.onglet-contenu.cache { display: none; }
+
+/* Stats classe */
+.stats-classe {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px; margin-bottom: 20px;
+}
+.stat-card {
+  background: white; border-radius: 10px; padding: 14px; text-align: center;
+  border-left: 4px solid var(--bleu);
+}
+.stat-card .label { font-size: 12px; color: var(--gris); text-transform: uppercase; letter-spacing: 1px; }
+.stat-card .valeur { font-size: 28px; font-weight: bold; color: var(--bleu); margin-top: 4px; font-family: 'Trebuchet MS'; }
+.stat-card.orange { border-left-color: var(--orange); }
+.stat-card.orange .valeur { color: var(--orange); }
+.stat-card.vert { border-left-color: var(--vert); }
+.stat-card.vert .valeur { color: var(--vert); }
+.stat-card.rouge { border-left-color: var(--rouge); }
+.stat-card.rouge .valeur { color: var(--rouge); }
+
+/* Filtres */
+.filtres {
+  display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center;
+}
+.filtres button {
+  padding: 8px 14px; background: white; border: 2px solid var(--bord);
+  border-radius: 20px; cursor: pointer; font-weight: bold; color: var(--gris);
+}
+.filtres button.actif { background: var(--bleu); color: white; border-color: var(--bleu); }
+.filtres .sep { color: var(--gris); }
+
+/* Tableau */
+.tableau-wrap { background: white; border-radius: 10px; overflow: auto; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+table { width: 100%; border-collapse: collapse; min-width: 800px; }
+thead { background: var(--bleu); color: white; }
+th { padding: 10px 12px; text-align: left; font-size: 13px; font-weight: bold; }
+td { padding: 10px 12px; border-bottom: 1px solid var(--bord); font-size: 14px; }
+tr:hover { background: var(--gris-clair); }
+.statut { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+.statut.vert { background: #dcfce7; color: #14532d; }
+.statut.jaune { background: #fef3c7; color: #78350f; }
+.statut.rouge { background: #fee2e2; color: #7f1d1d; }
+.statut.gris { background: var(--bord); color: var(--gris); }
+.badge-devtools { color: var(--rouge); font-size: 16px; cursor: help; }
+.btn-mini {
+  padding: 4px 10px; font-size: 12px; border: none; border-radius: 4px;
+  cursor: pointer; font-weight: bold; margin-right: 4px;
+}
+.btn-mini.reset { background: var(--bleu); color: white; }
+.btn-mini.delete { background: var(--rouge); color: white; }
+.btn-mini.rename { background: var(--orange); color: white; }
+.btn-mini.detail { background: var(--gris-clair); color: var(--bleu); border: 1px solid var(--bleu); }
+
+/* Actions globales */
+.actions-globales {
+  background: white; border-radius: 10px; padding: 16px; margin-bottom: 14px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.actions-globales button {
+  padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;
+}
+.actions-globales .export { background: var(--vert); color: white; }
+.actions-globales .reset-all { background: var(--orange); color: white; }
+.actions-globales .danger { background: var(--rouge); color: white; }
+.jauge-comptes {
+  margin-left: auto; display: flex; align-items: center; gap: 10px;
+}
+.jauge-bar {
+  width: 150px; height: 8px; background: var(--bord); border-radius: 4px; overflow: hidden;
+}
+.jauge-bar .fill {
+  height: 100%; background: var(--vert);
+  transition: all 0.3s;
+}
+.jauge-bar.warn .fill { background: var(--jaune); }
+.jauge-bar.full .fill { background: var(--rouge); }
+.jauge-text { font-size: 13px; font-weight: bold; color: var(--gris); }
+
+/* Modal détail */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none;
+  align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+}
+.modal-bg.actif { display: flex; }
+.modal {
+  background: white; border-radius: 12px; padding: 24px; max-width: 700px; width: 100%;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal h3 { margin-bottom: 14px; font-size: 20px; }
+.modal .close-btn {
+  float: right; background: none; border: none; font-size: 26px; cursor: pointer; color: var(--gris);
+}
+.tentative-card {
+  background: var(--gris-clair); padding: 12px; border-radius: 6px; margin-bottom: 8px;
+  border-left: 4px solid var(--bleu);
+}
+
+/* Paramètres */
+.param-card {
+  background: white; border-radius: 10px; padding: 16px; margin-bottom: 12px;
+}
+.param-card h3 { margin-bottom: 10px; font-size: 16px; }
+.param-row {
+  display: flex; align-items: center; gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid var(--bord);
+}
+.param-row:last-child { border-bottom: none; }
+.param-row label { flex: 1; font-weight: 500; }
+.param-row input, .param-row select {
+  padding: 6px 10px; border: 1px solid var(--bord); border-radius: 4px; font-family: inherit;
+}
+.toggle {
+  position: relative; display: inline-block; width: 50px; height: 26px;
+}
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle .slider {
+  position: absolute; cursor: pointer; inset: 0; background: var(--bord);
+  border-radius: 26px; transition: 0.3s;
+}
+.toggle .slider:before {
+  position: absolute; content: ""; height: 20px; width: 20px;
+  left: 3px; bottom: 3px; background: white; transition: 0.3s; border-radius: 50%;
+}
+.toggle input:checked + .slider { background: var(--vert); }
+.toggle input:checked + .slider:before { transform: translateX(24px); }
+
+.btn-save-params {
+  background: var(--orange); color: white; border: none; padding: 12px 20px;
+  border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; margin-top: 12px;
+}
+
+/* Logs */
+.log-row {
+  background: white; padding: 10px 14px; margin-bottom: 6px;
+  border-radius: 6px; border-left: 4px solid var(--gris); display: flex; gap: 12px; align-items: center;
+}
+.log-row.LOCKOUT, .log-row.HMAC_INVALIDE, .log-row.DEVTOOLS { border-left-color: var(--rouge); }
+.log-row.LOGIN_ECHEC { border-left-color: var(--jaune); }
+.log-row.CREATION, .log-row.RESET_PWD_PROF { border-left-color: var(--vert); }
+.log-row .date { font-size: 12px; color: var(--gris); min-width: 140px; }
+.log-row .type { font-weight: bold; font-size: 12px; min-width: 130px; padding: 3px 8px; background: var(--gris-clair); border-radius: 10px; }
+.log-row .msg { flex: 1; font-size: 13px; }
+
+/* Alerte */
+.alerte {
+  background: #fee2e2; border-left: 4px solid var(--rouge); padding: 10px 14px;
+  border-radius: 4px; color: #7f1d1d; margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  .header { flex-wrap: wrap; }
+  .header .titre-page { margin-left: 0; flex-basis: 100%; }
+  .stats-classe { grid-template-columns: repeat(2, 1fr); }
+  .actions-globales { flex-direction: column; align-items: stretch; }
+  .jauge-comptes { margin-left: 0; }
+  th, td { padding: 6px 8px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="ecran-login" class="login-bg">
+  <div class="login-card">
+    <div class="logo-bloc">
+      <div class="logo-flocon">❄</div>
+      <div style="font-family:'Trebuchet MS';font-weight:bold;font-size:24px;color:var(--bleu);margin-top:6px">inerWeb <span style="background:var(--orange);color:white;padding:2px 10px;border-radius:4px;font-size:14px">Édu</span></div>
+    </div>
+    <h2 class="titre">Tableau de bord prof</h2>
+    <div id="login-erreur"></div>
+    <input type="password" id="code-prof" placeholder="Code LPPJR" autofocus>
+    <button id="btn-login">🔓 Accéder</button>
+    <p style="text-align:center;margin-top:14px;font-size:12px;color:var(--gris)">F. Henninot — LP Privé Jacques Raynaud<br>Campus ÉQUATIO Marseille</p>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="ecran-app" style="display:none;">
+  <header class="header">
+    <span class="logo-flocon">❄</span>
+    <span class="logo-text">inerWeb</span>
+    <span class="cartouche-edu">Édu</span>
+    <span class="titre-page">F-Gas Eval MFER · Tableau de bord prof</span>
+    <span class="right">
+      <span id="header-classe-actuelle"></span>
+      <button id="btn-changer-classe">↺ Classe</button>
+      <button id="btn-deconnecter" style="margin-left:8px;background:transparent;border:1px solid white">Sortir</button>
+    </span>
+  </header>
+
+  <!-- Sélecteur classe -->
+  <div id="ecran-selecteur" class="selecteur-classe">
+    <h2>Choisis la classe à consulter</h2>
+    <div class="grid-classes" id="grid-classes"></div>
+  </div>
+
+  <!-- Contenu onglets -->
+  <div id="ecran-tabs" style="display:none;">
+    <div class="tabs">
+      <div class="tab actif" data-tab="notes">📊 Notes</div>
+      <div class="tab" data-tab="comptes">👥 Comptes <span class="badge" id="badge-comptes">0</span></div>
+      <div class="tab" data-tab="activite">⚠️ Activité</div>
+      <div class="tab" data-tab="parametres">⚙️ Paramètres</div>
+    </div>
+
+    <!-- Onglet NOTES -->
+    <div class="onglet-contenu" id="onglet-notes">
+      <div class="stats-classe" id="stats-notes"></div>
+
+      <div class="actions-globales">
+        <div class="filtres">
+          <button class="actif" data-filtre="tous">Tous</button>
+          <button data-filtre="reussite">🟢 Réussite</button>
+          <button data-filtre="moyen">🟡 Moyen</button>
+          <button data-filtre="echec">🔴 Échec</button>
+          <button data-filtre="pasfait">⚪ Pas fait</button>
+        </div>
+        <button class="export" id="btn-export-csv">📥 Export CSV ÉcoleDirecte</button>
+        <button class="danger" id="btn-effacer-tentatives">🗑 Effacer toutes les tentatives</button>
+      </div>
+
+      <div class="tableau-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Pseudo</th>
+              <th>Statut</th>
+              <th>Meilleure note</th>
+              <th>Dernière note</th>
+              <th>Tentatives</th>
+              <th>Consult. diapo</th>
+              <th>Durée moy.</th>
+              <th>Dernière activité</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-notes"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Onglet COMPTES -->
+    <div class="onglet-contenu cache" id="onglet-comptes">
+      <div class="actions-globales">
+        <div class="jauge-comptes">
+          <span class="jauge-text" id="jauge-text-comptes">0 / 40 comptes</span>
+          <div class="jauge-bar" id="jauge-bar-comptes"><div class="fill" style="width:0%"></div></div>
+        </div>
+        <button class="reset-all" id="btn-reset-classe">🔄 Reset mots de passe de la classe</button>
+        <button class="danger" id="btn-vider-classe">🗑 Vider la classe (TOUT supprimer)</button>
+      </div>
+
+      <div class="tableau-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Pseudo</th>
+              <th>Date création</th>
+              <th>Dernière connexion</th>
+              <th>Connexions</th>
+              <th>Reset demandé ?</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-comptes"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Onglet ACTIVITÉ -->
+    <div class="onglet-contenu cache" id="onglet-activite">
+      <h3 style="margin-bottom:10px">Journal de sécurité (200 derniers événements)</h3>
+      <div id="liste-logs"></div>
+    </div>
+
+    <!-- Onglet PARAMÈTRES -->
+    <div class="onglet-contenu cache" id="onglet-parametres">
+      <h3 style="margin-bottom:14px">Paramètres globaux</h3>
+      <div id="params-content"></div>
+      <button class="btn-save-params" id="btn-save-params">💾 Enregistrer les paramètres</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Modal détail élève ===== -->
+<div class="modal-bg" id="modal-detail">
+  <div class="modal">
+    <button class="close-btn" id="btn-close-modal">✕</button>
+    <h3 id="modal-titre">Détail élève</h3>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbySyF72l7HyQJvkLDLrkWXnK4mGWmMALK3k6Bs23QnuNJosEFc5bWO-MygETrvXOlPF0w/exec';
+// ⚠️ À remplacer après déploiement de Code.gs.
+
+const NOMS_CLASSES = {
+  '1IFCA': '1 IFCA', '2IFCA': '2 IFCA', '2TNE': '2 TNE',
+  '1MFER': '1 MFER', 'TMFER': 'T MFER', 'TPCVC': 'TP CVC',
+  'TOUTES': 'Toutes les classes'
+};
+
+let etat = {
+  code: null,
+  classe: null,
+  comptes: [],
+  resultats: [],
+  params: {},
+  filtreNotes: 'tous'
+};
+
+async function appelApi(action, params = {}, methode = 'POST') {
+  const url = APPS_SCRIPT_URL + '?action=' + action;
+  const opts = { method: methode, redirect: 'follow' };
+  if (methode === 'POST') {
+    opts.body = JSON.stringify(params);
+    opts.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
+  }
+  try {
+    const r = await fetch(url, opts);
+    return await r.json();
+  } catch (e) {
+    return { ok: false, error: 'Erreur réseau : ' + e.message };
+  }
+}
+
+// ============== LOGIN ==============
+document.getElementById('btn-login').addEventListener('click', async () => {
+  const code = document.getElementById('code-prof').value.trim();
+  if (!code) { document.getElementById('login-erreur').innerHTML = '<div class="alerte">Code requis.</div>'; return; }
+  document.getElementById('login-erreur').innerHTML = '<div class="alerte" style="background:#fef3c7;border-color:var(--jaune);color:#78350f">Vérification…</div>';
+  const r = await appelApi('get_settings', { code });
+  if (!r.ok) {
+    document.getElementById('login-erreur').innerHTML = '<div class="alerte">' + (r.error || 'Code invalide') + '</div>';
+    return;
+  }
+  etat.code = code;
+  etat.params = r.params || {};
+  sessionStorage.setItem('fgas_code', code);
+  document.getElementById('ecran-login').style.display = 'none';
+  document.getElementById('ecran-app').style.display = 'block';
+  afficherSelecteurClasse();
+});
+
+document.getElementById('code-prof').addEventListener('keypress', e => {
+  if (e.key === 'Enter') document.getElementById('btn-login').click();
+});
+
+// Auto-login si code en session
+window.addEventListener('DOMContentLoaded', () => {
+  const code = sessionStorage.getItem('fgas_code');
+  if (code) {
+    document.getElementById('code-prof').value = code;
+    document.getElementById('btn-login').click();
+  }
+});
+
+document.getElementById('btn-deconnecter').addEventListener('click', () => {
+  sessionStorage.removeItem('fgas_code');
+  location.reload();
+});
+
+document.getElementById('btn-changer-classe').addEventListener('click', () => {
+  afficherSelecteurClasse();
+});
+
+// ============== SÉLECTEUR CLASSE ==============
+function afficherSelecteurClasse() {
+  document.getElementById('ecran-tabs').style.display = 'none';
+  document.getElementById('ecran-selecteur').style.display = 'block';
+  document.getElementById('header-classe-actuelle').textContent = '';
+  const grid = document.getElementById('grid-classes');
+  grid.innerHTML = '';
+  ['1IFCA','2IFCA','2TNE','1MFER','TMFER','TPCVC'].forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'card-classe';
+    const ouvert = etat.params['ouvert_' + c] === 'true';
+    const mode = etat.params['mode_' + c] || 'leger';
+    card.innerHTML =
+      '<div class="nom">🎓 ' + NOMS_CLASSES[c] + '</div>' +
+      '<div class="info">' +
+        (ouvert ? '🟢 Ouvert' : '🔴 Fermé') + ' · ' +
+        (mode === 'habilitation' ? '40 q' : '20 q') +
+      '</div>';
+    card.addEventListener('click', () => choisirClasse(c));
+    grid.appendChild(card);
+  });
+  // Toutes
+  const cardT = document.createElement('div');
+  cardT.className = 'card-classe toutes';
+  cardT.innerHTML = '<div class="nom">📊 Toutes les classes</div><div class="info">Vue globale</div>';
+  cardT.addEventListener('click', () => choisirClasse('TOUTES'));
+  grid.appendChild(cardT);
+}
+
+async function choisirClasse(c) {
+  etat.classe = c;
+  document.getElementById('header-classe-actuelle').textContent = '· ' + NOMS_CLASSES[c];
+  document.getElementById('ecran-selecteur').style.display = 'none';
+  document.getElementById('ecran-tabs').style.display = 'block';
+  await rechargerDonnees();
+  basculerOnglet('notes');
+}
+
+async function rechargerDonnees() {
+  const [comptes, resultats] = await Promise.all([
+    appelApi('list_accounts', { code: etat.code, classe: etat.classe }),
+    appelApi('list_results', { code: etat.code, classe: etat.classe })
+  ]);
+  etat.comptes = comptes.ok ? comptes.comptes : [];
+  etat.resultats = resultats.ok ? resultats.resultats.filter(r => !r.invalidee) : [];
+  document.getElementById('badge-comptes').textContent = etat.comptes.length;
+  rendreNotes();
+  rendreComptes(comptes.limite || 40);
+}
+
+// ============== ONGLETS ==============
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => basculerOnglet(t.dataset.tab));
+});
+function basculerOnglet(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('actif', t.dataset.tab === tab));
+  document.querySelectorAll('.onglet-contenu').forEach(o => o.classList.toggle('cache', o.id !== 'onglet-' + tab));
+  if (tab === 'activite') chargerLogs();
+  if (tab === 'parametres') rendreParametres();
+}
+
+// ============== ONGLET NOTES ==============
+function meilleureNoteParEleve() {
+  const map = {};
+  etat.resultats.forEach(r => {
+    const key = r.classe + '|' + r.pseudo;
+    if (!map[key]) map[key] = { meilleure: -1, derniere: null, tentatives: 0, consult: 0, dureeTotale: 0, classe: r.classe, pseudo: r.pseudo, devtools: false };
+    const m = map[key];
+    m.tentatives++;
+    m.consult += parseInt(r.nb_consultations_diapo || 0);
+    m.dureeTotale += parseInt(r.duree_sec || 0);
+    if (r.devtools_ouvert) m.devtools = true;
+    const note = parseFloat(r.note_20);
+    if (note > m.meilleure) m.meilleure = note;
+    if (!m.derniere || new Date(r.date) > new Date(m.derniere.date)) m.derniere = r;
+  });
+  return map;
+}
+
+function rendreNotes() {
+  const map = meilleureNoteParEleve();
+  // Inclure aussi les comptes sans tentative
+  etat.comptes.forEach(c => {
+    const key = c.classe + '|' + c.pseudo;
+    if (!map[key]) {
+      map[key] = { meilleure: null, derniere: null, tentatives: 0, consult: 0, dureeTotale: 0, classe: c.classe, pseudo: c.pseudo, devtools: false };
+    }
+  });
+
+  let lignes = Object.values(map);
+
+  // Filtre
+  lignes = lignes.filter(l => {
+    if (etat.filtreNotes === 'tous') return true;
+    if (etat.filtreNotes === 'pasfait') return l.tentatives === 0;
+    if (l.meilleure === null) return etat.filtreNotes === 'pasfait';
+    if (etat.filtreNotes === 'reussite') return l.meilleure >= 15;
+    if (etat.filtreNotes === 'moyen') return l.meilleure >= 10 && l.meilleure < 15;
+    if (etat.filtreNotes === 'echec') return l.meilleure < 10;
+    return true;
+  });
+
+  // Tri par meilleure note décroissante (puis pseudo)
+  lignes.sort((a, b) => {
+    const na = a.meilleure ?? -1;
+    const nb = b.meilleure ?? -1;
+    if (nb !== na) return nb - na;
+    return a.pseudo.localeCompare(b.pseudo);
+  });
+
+  // Stats
+  const fait = lignes.filter(l => l.tentatives > 0);
+  const moyennes = fait.map(l => l.meilleure).filter(n => n !== null);
+  const moyenne = moyennes.length ? (moyennes.reduce((a, b) => a + b, 0) / moyennes.length).toFixed(2) : '—';
+  const reussites = moyennes.filter(n => n >= 10).length;
+  const tauxR = moyennes.length ? Math.round(reussites / moyennes.length * 100) : 0;
+
+  document.getElementById('stats-notes').innerHTML =
+    '<div class="stat-card"><div class="label">Effectif</div><div class="valeur">' + etat.comptes.length + '</div></div>' +
+    '<div class="stat-card orange"><div class="label">Ont fait le DM</div><div class="valeur">' + fait.length + '</div></div>' +
+    '<div class="stat-card vert"><div class="label">Moyenne classe</div><div class="valeur">' + moyenne + '</div></div>' +
+    '<div class="stat-card vert"><div class="label">% réussite (≥10)</div><div class="valeur">' + tauxR + '%</div></div>' +
+    '<div class="stat-card rouge"><div class="label">Pas fait</div><div class="valeur">' + (etat.comptes.length - fait.length) + '</div></div>';
+
+  // Tableau
+  const tbody = document.getElementById('tbody-notes');
+  tbody.innerHTML = '';
+  lignes.forEach(l => {
+    const tr = document.createElement('tr');
+    let statut;
+    if (l.tentatives === 0) statut = '<span class="statut gris">⚪ Pas fait</span>';
+    else if (l.meilleure >= 15) statut = '<span class="statut vert">🟢 Réussite</span>';
+    else if (l.meilleure >= 10) statut = '<span class="statut jaune">🟡 Moyen</span>';
+    else statut = '<span class="statut rouge">🔴 Échec</span>';
+
+    const dureeM = l.tentatives > 0 ? Math.round(l.dureeTotale / l.tentatives / 60) + ' min' : '—';
+    const dern = l.derniere ? new Date(l.derniere.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+    const dt = l.devtools ? '<span class="badge-devtools" title="DevTools détecté lors d\'au moins une tentative">🚨</span>' : '';
+
+    tr.innerHTML =
+      '<td><strong>' + l.pseudo + '</strong> ' + dt + (etat.classe === 'TOUTES' ? ' <small style="color:var(--gris)">(' + l.classe + ')</small>' : '') + '</td>' +
+      '<td>' + statut + '</td>' +
+      '<td>' + (l.meilleure !== null ? l.meilleure.toFixed(2) + '/20' : '—') + '</td>' +
+      '<td>' + (l.derniere ? parseFloat(l.derniere.note_20).toFixed(2) + '/20' : '—') + '</td>' +
+      '<td>' + l.tentatives + '</td>' +
+      '<td>' + l.consult + '</td>' +
+      '<td>' + dureeM + '</td>' +
+      '<td>' + dern + '</td>' +
+      '<td><button class="btn-mini detail" data-c="' + l.classe + '" data-p="' + l.pseudo + '">Détail</button></td>';
+    tbody.appendChild(tr);
+  });
+
+  document.querySelectorAll('.btn-mini.detail').forEach(b => {
+    b.addEventListener('click', () => ouvrirDetailEleve(b.dataset.c, b.dataset.p));
+  });
+}
+
+document.querySelectorAll('#onglet-notes .filtres button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#onglet-notes .filtres button').forEach(x => x.classList.remove('actif'));
+    b.classList.add('actif');
+    etat.filtreNotes = b.dataset.filtre;
+    rendreNotes();
+  });
+});
+
+// ============== DÉTAIL ÉLÈVE ==============
+function ouvrirDetailEleve(classe, pseudo) {
+  const tentatives = etat.resultats.filter(r => r.classe === classe && r.pseudo === pseudo)
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  let html = '<p><strong>Élève :</strong> ' + pseudo + ' (' + NOMS_CLASSES[classe] + ')</p>';
+  html += '<p><strong>Nombre de tentatives :</strong> ' + tentatives.length + '</p>';
+
+  if (tentatives.length === 0) {
+    html += '<p style="color:var(--gris);font-style:italic">Aucune tentative enregistrée.</p>';
+  } else {
+    // Courbe simplifiée
+    html += '<h4 style="margin:14px 0 8px">📈 Progression</h4>';
+    html += '<div style="display:flex;gap:6px;align-items:flex-end;height:80px;background:var(--gris-clair);padding:10px;border-radius:6px">';
+    tentatives.forEach(t => {
+      const h = (parseFloat(t.note_20) / 20 * 70) + 'px';
+      const c = parseFloat(t.note_20) >= 15 ? 'var(--vert)' : parseFloat(t.note_20) >= 10 ? 'var(--jaune)' : 'var(--rouge)';
+      html += '<div style="flex:1;background:' + c + ';height:' + h + ';position:relative" title="' + t.note_20 + '/20"><span style="position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px">' + parseFloat(t.note_20).toFixed(1) + '</span></div>';
+    });
+    html += '</div><div style="height:18px"></div>';
+
+    html += '<h4 style="margin-top:14px;margin-bottom:8px">📋 Détail des tentatives</h4>';
+    tentatives.forEach((t, i) => {
+      const date = new Date(t.date).toLocaleString('fr-FR');
+      html += '<div class="tentative-card">';
+      html += '<strong>Tentative ' + (i + 1) + '</strong> · ' + date + '<br>';
+      html += 'Note : <strong>' + parseFloat(t.note_20).toFixed(2) + '/20</strong> · ';
+      html += 'Mode : ' + (t.mode === 'habilitation' ? '40 q' : '20 q') + ' · ';
+      html += 'Bonnes : ' + t.nb_correctes + '/' + t.nb_questions + ' · ';
+      html += 'Durée : ' + Math.round(t.duree_sec / 60) + ' min · ';
+      html += 'Consult. diapo : ' + t.nb_consultations_diapo;
+      if (t.devtools_ouvert) html += ' <span class="badge-devtools">🚨 DevTools détecté</span>';
+      html += ' <button class="btn-mini delete" data-row="' + t._row + '" style="float:right">🗑 Invalider</button>';
+      html += '</div>';
+    });
+  }
+
+  document.getElementById('modal-titre').textContent = 'Détail · ' + pseudo;
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-detail').classList.add('actif');
+
+  document.querySelectorAll('#modal-content .btn-mini.delete').forEach(b => {
+    b.addEventListener('click', async () => {
+      if (!confirm('Invalider cette tentative ? Elle sera marquée comme annulée mais conservée.')) return;
+      const r = await appelApi('delete_result', { code: etat.code, row: b.dataset.row, mode_suppression: 'invalidate' });
+      if (r.ok) {
+        await rechargerDonnees();
+        ouvrirDetailEleve(classe, pseudo);
+      }
+    });
+  });
+}
+
+document.getElementById('btn-close-modal').addEventListener('click', () => {
+  document.getElementById('modal-detail').classList.remove('actif');
+});
+document.getElementById('modal-detail').addEventListener('click', e => {
+  if (e.target.id === 'modal-detail') document.getElementById('modal-detail').classList.remove('actif');
+});
+
+// ============== EXPORT CSV ==============
+document.getElementById('btn-export-csv').addEventListener('click', () => {
+  const map = meilleureNoteParEleve();
+  etat.comptes.forEach(c => {
+    const key = c.classe + '|' + c.pseudo;
+    if (!map[key]) map[key] = { meilleure: null, tentatives: 0, classe: c.classe, pseudo: c.pseudo };
+  });
+  let csv = 'Classe;Pseudo;Meilleure note /20;Tentatives;Statut\n';
+  Object.values(map).forEach(l => {
+    let statut = 'Pas fait';
+    if (l.meilleure !== null) {
+      if (l.meilleure >= 15) statut = 'Réussite';
+      else if (l.meilleure >= 10) statut = 'Moyen';
+      else statut = 'Échec';
+    }
+    csv += l.classe + ';' + l.pseudo + ';' + (l.meilleure !== null ? l.meilleure.toFixed(2).replace('.', ',') : '') + ';' + l.tentatives + ';' + statut + '\n';
+  });
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'fgas_notes_' + etat.classe + '_' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('btn-effacer-tentatives').addEventListener('click', async () => {
+  if (etat.classe === 'TOUTES') { alert('Choisis une classe spécifique pour cette action.'); return; }
+  if (!confirm('Effacer TOUTES les tentatives DM de la classe ' + NOMS_CLASSES[etat.classe] + ' ? Les comptes seront conservés.')) return;
+  // Suppression individuelle ligne par ligne
+  for (const r of etat.resultats) {
+    await appelApi('delete_result', { code: etat.code, row: r._row, mode_suppression: 'delete' });
+  }
+  await rechargerDonnees();
+  alert('Tentatives effacées.');
+});
+
+// ============== ONGLET COMPTES ==============
+function rendreComptes(limite) {
+  const tbody = document.getElementById('tbody-comptes');
+  tbody.innerHTML = '';
+  etat.comptes.sort((a, b) => a.pseudo.localeCompare(b.pseudo));
+  etat.comptes.forEach(c => {
+    const tr = document.createElement('tr');
+    const date = new Date(c.date_creation).toLocaleDateString('fr-FR');
+    const lastConn = c.derniere_connexion ? new Date(c.derniere_connexion).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : 'Jamais';
+    const reset = c.reset_demande ? '🟠 Oui' : '—';
+    tr.innerHTML =
+      '<td><strong>' + c.pseudo + '</strong>' + (etat.classe === 'TOUTES' ? ' <small style="color:var(--gris)">(' + c.classe + ')</small>' : '') + '</td>' +
+      '<td>' + date + '</td>' +
+      '<td>' + lastConn + '</td>' +
+      '<td>' + (c.nb_connexions || 0) + '</td>' +
+      '<td>' + reset + '</td>' +
+      '<td>' +
+        '<button class="btn-mini reset" data-c="' + c.classe + '" data-p="' + c.pseudo + '">🔄 Reset MDP</button>' +
+        '<button class="btn-mini rename" data-c="' + c.classe + '" data-p="' + c.pseudo + '">✏️ Renommer</button>' +
+        '<button class="btn-mini delete" data-c="' + c.classe + '" data-p="' + c.pseudo + '">🗑 Supprimer</button>' +
+      '</td>';
+    tbody.appendChild(tr);
+  });
+
+  // Jauge
+  if (etat.classe !== 'TOUTES') {
+    const nb = etat.comptes.length;
+    const pct = Math.min(100, (nb / limite) * 100);
+    document.getElementById('jauge-text-comptes').textContent = nb + ' / ' + limite + ' comptes';
+    const bar = document.getElementById('jauge-bar-comptes');
+    bar.querySelector('.fill').style.width = pct + '%';
+    bar.classList.remove('warn', 'full');
+    if (pct >= 90) bar.classList.add('full');
+    else if (pct >= 70) bar.classList.add('warn');
+  } else {
+    document.getElementById('jauge-text-comptes').textContent = etat.comptes.length + ' comptes au total';
+    document.getElementById('jauge-bar-comptes').querySelector('.fill').style.width = '100%';
+  }
+
+  document.querySelectorAll('#tbody-comptes .btn-mini.reset').forEach(b => {
+    b.addEventListener('click', async () => {
+      if (!confirm('Réinitialiser le mot de passe de ' + b.dataset.p + ' à "' + b.dataset.c + '" ?')) return;
+      const r = await appelApi('reset_password', { code: etat.code, classe: b.dataset.c, pseudo: b.dataset.p });
+      if (r.ok) { alert('✅ Mot de passe réinitialisé'); await rechargerDonnees(); }
+      else alert('❌ ' + r.error);
+    });
+  });
+  document.querySelectorAll('#tbody-comptes .btn-mini.delete').forEach(b => {
+    b.addEventListener('click', async () => {
+      const supp = confirm('Supprimer le compte ' + b.dataset.p + ' ?\n\nOK = supprimer compte ET notes\nAnnuler = annuler');
+      if (!supp) return;
+      const r = await appelApi('delete_account', { code: etat.code, classe: b.dataset.c, pseudo: b.dataset.p, supprimer_notes: true });
+      if (r.ok) { alert('✅ Compte supprimé'); await rechargerDonnees(); }
+      else alert('❌ ' + r.error);
+    });
+  });
+  document.querySelectorAll('#tbody-comptes .btn-mini.rename').forEach(b => {
+    b.addEventListener('click', async () => {
+      const nouveau = prompt('Nouveau pseudo pour ' + b.dataset.p + ' (5+ majuscules)');
+      if (!nouveau || nouveau.length < 5) return;
+      const r = await appelApi('rename_pseudo', { code: etat.code, classe: b.dataset.c, ancien_pseudo: b.dataset.p, nouveau_pseudo: nouveau.toUpperCase() });
+      if (r.ok) { alert('✅ Renommé'); await rechargerDonnees(); }
+      else alert('❌ ' + r.error);
+    });
+  });
+}
+
+document.getElementById('btn-reset-classe').addEventListener('click', async () => {
+  if (etat.classe === 'TOUTES') { alert('Choisis une classe spécifique.'); return; }
+  if (!confirm('Réinitialiser TOUS les mots de passe de ' + NOMS_CLASSES[etat.classe] + ' ?\nLes élèves devront se reconnecter avec "' + etat.classe + '".')) return;
+  const r = await appelApi('reset_class_passwords', { code: etat.code, classe: etat.classe });
+  if (r.ok) { alert('✅ ' + r.nb + ' comptes réinitialisés'); await rechargerDonnees(); }
+});
+
+document.getElementById('btn-vider-classe').addEventListener('click', async () => {
+  if (etat.classe === 'TOUTES') { alert('Choisis une classe spécifique.'); return; }
+  const conf = prompt('⚠️ DANGER : Cette action supprime TOUS les comptes ET les notes de la classe.\n\nPour confirmer, tape exactement le nom de la classe : ' + etat.classe);
+  if (conf !== etat.classe) { alert('Confirmation invalide.'); return; }
+  const r = await appelApi('clear_class', { code: etat.code, classe: etat.classe, confirmation: conf });
+  if (r.ok) { alert('✅ ' + r.nb_comptes + ' comptes + ' + r.nb_resultats + ' tentatives supprimés'); await rechargerDonnees(); }
+});
+
+// ============== ONGLET ACTIVITÉ ==============
+async function chargerLogs() {
+  const r = await appelApi('list_logs', { code: etat.code, classe: etat.classe });
+  const div = document.getElementById('liste-logs');
+  if (!r.ok || !r.logs.length) {
+    div.innerHTML = '<p style="color:var(--gris);font-style:italic">Aucun événement enregistré.</p>';
+    return;
+  }
+  div.innerHTML = '';
+  r.logs.forEach(log => {
+    const d = document.createElement('div');
+    d.className = 'log-row ' + log.type;
+    const date = new Date(log.date).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'medium' });
+    d.innerHTML =
+      '<span class="date">' + date + '</span>' +
+      '<span class="type">' + log.type + '</span>' +
+      '<span class="msg"><strong>' + (log.classe || '') + (log.pseudo ? ' / ' + log.pseudo : '') + '</strong> · ' + (log.message || '') + '</span>';
+    div.appendChild(d);
+  });
+}
+
+// ============== ONGLET PARAMÈTRES ==============
+function rendreParametres() {
+  const p = etat.params;
+  let html = '';
+
+  // Activation par classe + mode
+  html += '<div class="param-card"><h3>🟢 Activation et mode par classe</h3>';
+  ['1IFCA','2IFCA','2TNE','1MFER','TMFER','TPCVC'].forEach(c => {
+    const ouvert = p['ouvert_' + c] === 'true';
+    const mode = p['mode_' + c] || 'leger';
+    html += '<div class="param-row">';
+    html += '<label>' + NOMS_CLASSES[c] + '</label>';
+    html += '<label class="toggle"><input type="checkbox" data-cle="ouvert_' + c + '" ' + (ouvert ? 'checked' : '') + '><span class="slider"></span></label>';
+    html += '<select data-cle="mode_' + c + '"><option value="leger"' + (mode==='leger'?' selected':'') + '>20 q (DM léger)</option><option value="habilitation"' + (mode==='habilitation'?' selected':'') + '>40 q (Examen blanc)</option></select>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // Globaux
+  html += '<div class="param-card"><h3>⚙️ Paramètres globaux</h3>';
+  html += '<div class="param-row"><label>Limite comptes par classe</label><input type="number" min="10" max="60" data-cle="limite_comptes_par_classe" value="' + (p.limite_comptes_par_classe || '40') + '"></div>';
+  html += '<div class="param-row"><label>Max tentatives par élève (0 = illimité)</label><input type="number" min="0" max="20" data-cle="max_tentatives" value="' + (p.max_tentatives || '0') + '"></div>';
+  html += '<div class="param-row"><label>Code AES (chiffrement questions)</label><input type="text" data-cle="code_aes" value="' + (p.code_aes || 'FGAS2026-MFER') + '"></div>';
+  html += '<div class="param-row"><label>Code prof LPPJR</label><input type="text" data-cle="code_lppjr" value="' + (p.code_lppjr || 'LPPJR2026') + '"></div>';
+  html += '</div>';
+
+  document.getElementById('params-content').innerHTML = html;
+}
+
+document.getElementById('btn-save-params').addEventListener('click', async () => {
+  const updates = {};
+  document.querySelectorAll('#params-content [data-cle]').forEach(el => {
+    let v;
+    if (el.type === 'checkbox') v = el.checked ? 'true' : 'false';
+    else v = el.value;
+    updates[el.dataset.cle] = v;
+  });
+  const r = await appelApi('update_settings', { code: etat.code, updates });
+  if (r.ok) {
+    alert('✅ Paramètres enregistrés');
+    const r2 = await appelApi('get_settings', { code: etat.code });
+    if (r2.ok) etat.params = r2.params;
+  } else {
+    alert('❌ ' + (r.error || 'Erreur'));
+  }
+});
+
+</script>
+</body>
+</html>
