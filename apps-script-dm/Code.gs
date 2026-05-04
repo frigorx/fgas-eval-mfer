@@ -51,7 +51,8 @@ function doPost(e) {
 }
 
 function handleRequest(e, methode) {
-  const action = (e.parameter.action || '').toLowerCase();
+  e = e || { parameter: {}, postData: null };
+  const action = ((e.parameter && e.parameter.action) || '').toLowerCase();
   let body = {};
   if (methode === 'POST' && e.postData && e.postData.contents) {
     try {
