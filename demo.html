@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F-Gas DM — Démo · inerWeb Édu</title>
+<style>
+:root {
+  --bleu: #1b3a63;
+  --bleu-fonce: #142848;
+  --orange: #ff6b35;
+  --orange-clair: #ffe8de;
+  --vert: #16a34a;
+  --rouge: #dc2626;
+  --jaune: #f59e0b;
+  --gris-clair: #f5f7fa;
+  --gris: #6b7280;
+  --texte: #1f2937;
+  --bord: #e5e7eb;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+  background: var(--gris-clair);
+  color: var(--texte);
+  font-size: 16px;
+  line-height: 1.5;
+}
+h1, h2, h3, h4 { font-family: 'Trebuchet MS', sans-serif; color: var(--bleu); margin: 0; }
+
+/* ===== HEADER HÉROS ===== */
+.heros {
+  background: var(--bleu);
+  color: white;
+  padding: 50px 20px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.heros::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 8px;
+  background: var(--orange);
+}
+.heros .container { max-width: 900px; margin: 0 auto; text-align: center; }
+.heros .logo-bloc {
+  display: flex; align-items: center; gap: 12px;
+  justify-content: center; margin-bottom: 30px;
+}
+.heros .flocon { font-size: 50px; color: var(--orange); }
+.heros .nom-marque {
+  font-family: 'Trebuchet MS', sans-serif;
+  font-weight: bold; font-size: 36px; color: white;
+}
+.heros .cartouche {
+  background: var(--orange); color: white;
+  padding: 6px 18px; border-radius: 6px;
+  font-size: 18px; font-weight: bold;
+}
+.heros .surtitre {
+  color: var(--orange); letter-spacing: 3px;
+  font-size: 13px; margin-bottom: 12px;
+}
+.heros h1 { color: white; font-size: 42px; line-height: 1.1; margin-bottom: 16px; }
+.heros .accroche {
+  color: var(--orange); font-style: italic;
+  font-size: 22px; margin-bottom: 20px;
+}
+.heros .badges {
+  display: flex; gap: 10px; justify-content: center;
+  flex-wrap: wrap; margin-top: 30px;
+}
+.heros .badge {
+  background: rgba(255,255,255,0.1);
+  border: 2px solid var(--orange);
+  padding: 8px 18px; border-radius: 30px;
+  font-size: 14px; font-weight: bold;
+}
+.heros .signature {
+  color: rgba(255,255,255,0.6);
+  font-size: 13px; margin-top: 30px;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 60px 20px;
+}
+.section.alt { background: white; max-width: none; }
+.section.alt > .inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.section h2 {
+  font-size: 32px; margin-bottom: 8px;
+  text-align: center;
+}
+.section .soustitre-section {
+  color: var(--orange); font-style: italic;
+  font-size: 18px; text-align: center;
+  margin-bottom: 40px;
+}
+
+/* ===== CARTES PITCH ===== */
+.grid-pitch {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px; margin-top: 30px;
+}
+.card-pitch {
+  background: white;
+  border-left: 4px solid var(--bleu);
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.card-pitch.orange { border-left-color: var(--orange); }
+.card-pitch.vert { border-left-color: var(--vert); }
+.card-pitch .icone { font-size: 40px; margin-bottom: 14px; }
+.card-pitch h3 { font-size: 19px; margin-bottom: 10px; }
+.card-pitch p { color: var(--texte); font-size: 14px; line-height: 1.5; }
+
+/* ===== ÉCRANS DÉMO (CAPTURES CSS) ===== */
+.demo-row {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 60px;
+}
+.demo-row.inverse { grid-template-columns: 1fr 280px; }
+.demo-row.inverse .demo-screen { order: 2; }
+.demo-row.inverse .demo-text { order: 1; }
+@media (max-width: 720px) {
+  .demo-row, .demo-row.inverse { grid-template-columns: 1fr; }
+  .demo-row .demo-screen, .demo-row.inverse .demo-screen { order: 1; }
+  .demo-row .demo-text, .demo-row.inverse .demo-text { order: 2; }
+}
+
+/* Mockup téléphone */
+.phone-mockup {
+  width: 280px; max-width: 100%;
+  background: #1f1f1f;
+  border-radius: 30px;
+  padding: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  margin: 0 auto;
+}
+.phone-screen {
+  background: white;
+  border-radius: 22px;
+  overflow: hidden;
+  height: 480px;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  position: relative;
+}
+.phone-notch {
+  height: 18px; background: #1f1f1f;
+  width: 60%; margin: 0 auto;
+  border-radius: 0 0 14px 14px;
+  position: relative; z-index: 2;
+}
+
+/* Mockup laptop */
+.laptop-mockup {
+  background: #1f1f1f;
+  border-radius: 12px 12px 4px 4px;
+  padding: 10px 10px 4px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  position: relative;
+}
+.laptop-mockup::after {
+  content: '';
+  display: block;
+  height: 10px;
+  background: linear-gradient(180deg, #2a2a2a, #1a1a1a);
+  border-radius: 0 0 20px 20px;
+  margin: 4px -16px 0;
+}
+.laptop-screen {
+  background: white;
+  border-radius: 4px;
+  height: 360px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  position: relative;
+}
+
+/* ===== ÉCRAN GARDE ÉLÈVE ===== */
+.eg-garde {
+  background: var(--bleu);
+  color: white;
+  padding: 14px 12px;
+  height: 100%;
+  position: relative;
+  overflow-y: auto;
+}
+.eg-garde::before {
+  content: ''; position: absolute;
+  top: 0; bottom: 0; left: 0; width: 4px;
+  background: var(--orange);
+}
+.eg-garde .logo {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 12px;
+}
+.eg-garde .floc { font-size: 18px; color: var(--orange); }
+.eg-garde .nm { font-family: 'Trebuchet MS'; font-weight: bold; font-size: 14px; }
+.eg-garde .ct { background: var(--orange); padding: 2px 7px; font-size: 9px; border-radius: 3px; font-weight: bold; }
+.eg-garde .surt { color: var(--orange); font-size: 8px; letter-spacing: 1px; margin: 8px 0 4px; }
+.eg-garde h2 { color: white; font-size: 13px; line-height: 1.2; margin-bottom: 8px; }
+.eg-garde .ssub { color: var(--orange); font-style: italic; font-size: 10px; margin-bottom: 12px; }
+.eg-garde .form-bloc {
+  background: white; color: var(--texte);
+  padding: 10px; border-radius: 6px; margin-bottom: 8px;
+}
+.eg-garde .ft { color: var(--bleu); font-weight: bold; font-size: 11px; margin-bottom: 8px; }
+.eg-garde .btn-cl {
+  width: 100%; padding: 7px; margin-bottom: 4px;
+  background: white; color: var(--bleu);
+  border: 1.5px solid var(--bleu); border-radius: 5px;
+  font-size: 10px; font-weight: bold;
+  text-align: left; padding-left: 10px;
+}
+.eg-garde .btn-cl.actif { background: var(--bleu); color: white; }
+
+/* ===== ÉCRAN DM SPLIT ===== */
+.eg-dm {
+  display: flex; flex-direction: column; height: 100%;
+}
+.eg-dm-haut {
+  flex: 0 0 50%;
+  background: white;
+  padding: 8px 10px;
+  overflow: hidden;
+  border-bottom: 3px solid var(--orange);
+}
+.eg-dm-bas {
+  flex: 1; background: var(--gris-clair); padding: 8px 10px;
+}
+.eg-dm-haut .header-d {
+  display: flex; align-items: center; gap: 4px; font-size: 8px; margin-bottom: 4px; color: var(--gris);
+}
+.eg-dm-haut .pgn { margin-left: auto; }
+.eg-dm-haut .titre-d {
+  color: var(--bleu); font-family: 'Trebuchet MS';
+  font-weight: bold; font-size: 11px; line-height: 1.2; margin-bottom: 2px;
+}
+.eg-dm-haut .ssub-d { color: var(--orange); font-style: italic; font-size: 9px; margin-bottom: 6px; }
+.eg-dm-haut .card-d {
+  background: var(--gris-clair); border-left: 2px solid var(--bleu);
+  padding: 5px 7px; border-radius: 3px; margin-bottom: 4px;
+  font-size: 9px; line-height: 1.3;
+}
+.eg-dm-haut .card-d.orange { border-left-color: var(--orange); }
+.eg-dm-haut .card-d h4 { font-size: 9px; margin-bottom: 2px; color: var(--bleu); }
+.eg-dm-bas .compteur {
+  display: flex; justify-content: space-between;
+  font-size: 8px; color: var(--gris); margin-bottom: 3px;
+}
+.eg-dm-bas .barre {
+  height: 3px; background: var(--bord); border-radius: 2px; overflow: hidden; margin-bottom: 5px;
+}
+.eg-dm-bas .barre-fill {
+  width: 35%; height: 100%; background: linear-gradient(90deg, var(--bleu), var(--orange));
+}
+.eg-dm-bas .btn-voir {
+  width: 100%; padding: 5px; background: var(--bleu); color: white;
+  font-size: 9px; font-weight: bold; border-radius: 4px; margin-bottom: 5px; text-align: center; border: none;
+}
+.eg-dm-bas .qbloc {
+  background: white; border: 1.5px solid var(--bord);
+  border-radius: 5px; padding: 7px;
+}
+.eg-dm-bas .qnum {
+  background: var(--bleu); color: white;
+  padding: 1px 6px; border-radius: 8px;
+  font-size: 8px; font-weight: bold; margin-bottom: 5px;
+  display: inline-block;
+}
+.eg-dm-bas .qtxt {
+  font-size: 10px; line-height: 1.3; margin-bottom: 7px; font-weight: 500;
+}
+.eg-dm-bas .ch {
+  display: block; padding: 5px 7px; margin-bottom: 3px;
+  background: white; border: 1.5px solid var(--bord);
+  border-radius: 4px; font-size: 9px;
+}
+.eg-dm-bas .ch.bonne { background: #dcfce7; border-color: var(--vert); color: #14532d; }
+
+/* ===== ÉCRAN RÉSULTAT ===== */
+.eg-res {
+  background: var(--bleu); color: white;
+  height: 100%; padding: 16px 12px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.eg-res::before {
+  content: ''; position: absolute;
+  top: 0; bottom: 0; left: 0; width: 4px; background: var(--orange);
+}
+.eg-res .logo {
+  display: flex; gap: 6px; justify-content: center;
+  margin-bottom: 14px;
+}
+.eg-res .surt { color: var(--orange); letter-spacing: 1.5px; font-size: 9px; margin-bottom: 8px; }
+.eg-res h2 { color: white; font-size: 15px; margin-bottom: 12px; }
+.eg-res .gn {
+  font-family: 'Trebuchet MS'; font-weight: bold;
+  font-size: 60px; color: var(--orange); line-height: 1;
+}
+.eg-res .gn span { color: white; font-size: 26px; }
+.eg-res .pseudo { font-size: 11px; margin: 8px 0; }
+.eg-res .stats-r {
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px; padding: 8px;
+  font-size: 9px; text-align: left; line-height: 1.6;
+}
+.eg-res .btn-r {
+  width: 100%; padding: 7px;
+  background: var(--orange); color: white;
+  border-radius: 5px; font-size: 10px; font-weight: bold;
+  margin-top: 8px; border: none;
+}
+
+/* ===== ÉCRAN TABLEAU DE BORD ===== */
+.lp-header {
+  background: var(--bleu); color: white;
+  padding: 8px 14px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 3px solid var(--orange);
+}
+.lp-header .floc { color: var(--orange); font-size: 18px; }
+.lp-header .nm { font-family: 'Trebuchet MS'; font-weight: bold; font-size: 14px; }
+.lp-header .ct { background: var(--orange); padding: 1px 6px; border-radius: 3px; font-size: 9px; font-weight: bold; }
+.lp-header .tit { font-size: 11px; opacity: 0.9; margin-left: 6px; }
+.lp-header .right { margin-left: auto; font-size: 10px; }
+.lp-tabs {
+  display: flex; gap: 2px; padding: 0 12px;
+  background: white; border-bottom: 1px solid var(--bord);
+}
+.lp-tab {
+  padding: 8px 12px; font-size: 11px; font-weight: bold;
+  color: var(--gris); border-bottom: 3px solid transparent;
+}
+.lp-tab.actif { color: var(--bleu); border-bottom-color: var(--orange); }
+.lp-content { padding: 12px; flex: 1; overflow-y: auto; }
+.lp-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+.lp-stat-card {
+  background: white; border-left: 3px solid var(--bleu);
+  padding: 6px; border-radius: 4px; text-align: center;
+}
+.lp-stat-card.orange { border-left-color: var(--orange); }
+.lp-stat-card.vert { border-left-color: var(--vert); }
+.lp-stat-card .lab { font-size: 7px; color: var(--gris); text-transform: uppercase; }
+.lp-stat-card .val { font-size: 16px; font-weight: bold; color: var(--bleu); }
+.lp-stat-card.orange .val { color: var(--orange); }
+.lp-stat-card.vert .val { color: var(--vert); }
+.lp-tab-content { background: white; border-radius: 4px; padding: 6px; }
+.lp-tab-content table { width: 100%; border-collapse: collapse; font-size: 9px; }
+.lp-tab-content th { background: var(--bleu); color: white; padding: 4px; text-align: left; }
+.lp-tab-content td { padding: 4px; border-bottom: 1px solid var(--bord); }
+.lp-tab-content .stat-pill { padding: 1px 6px; border-radius: 6px; font-size: 7px; font-weight: bold; }
+.lp-tab-content .stat-pill.vert { background: #dcfce7; color: #14532d; }
+.lp-tab-content .stat-pill.jaune { background: #fef3c7; color: #78350f; }
+.lp-tab-content .stat-pill.rouge { background: #fee2e2; color: #7f1d1d; }
+.lp-tab-content .badge-dt { color: var(--rouge); }
+
+/* ===== TEXTES À CÔTÉ DES MOCKUPS ===== */
+.demo-text h3 {
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+.demo-text .num {
+  display: inline-block;
+  width: 36px; height: 36px;
+  background: var(--orange); color: white;
+  border-radius: 50%;
+  text-align: center; line-height: 36px;
+  font-weight: bold;
+  margin-right: 10px;
+  font-family: 'Trebuchet MS';
+  font-size: 18px;
+}
+.demo-text p { margin-bottom: 12px; }
+.demo-text ul { padding-left: 20px; margin-bottom: 12px; }
+.demo-text li { margin-bottom: 6px; }
+.demo-text strong { color: var(--bleu); }
+
+/* ===== POURQUOI / SÉCURITÉ ===== */
+.pourquoi {
+  background: var(--bleu);
+  color: white;
+  padding: 60px 20px;
+}
+.pourquoi .container { max-width: 1100px; margin: 0 auto; }
+.pourquoi h2 { color: white; text-align: center; font-size: 32px; margin-bottom: 8px; }
+.pourquoi .soustitre-section { color: var(--orange); }
+.pourquoi .grid-args {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px; margin-top: 40px;
+}
+.pourquoi .arg-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,107,53,0.3);
+  padding: 24px; border-radius: 10px;
+}
+.pourquoi .arg-card .icone { font-size: 36px; margin-bottom: 10px; color: var(--orange); }
+.pourquoi .arg-card h3 { color: white; font-size: 18px; margin-bottom: 8px; }
+.pourquoi .arg-card p { font-size: 14px; line-height: 1.6; opacity: 0.9; }
+
+/* ===== CTA FINAL ===== */
+.cta-final {
+  background: linear-gradient(135deg, var(--bleu), var(--bleu-fonce));
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+  border-top: 6px solid var(--orange);
+}
+.cta-final h2 { color: white; font-size: 32px; margin-bottom: 14px; }
+.cta-final p { font-size: 17px; max-width: 600px; margin: 0 auto 24px; opacity: 0.9; }
+.cta-final .btns {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+}
+.cta-final .btn {
+  padding: 14px 26px;
+  background: var(--orange);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: all 0.2s;
+}
+.cta-final .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,53,0.4); }
+.cta-final .btn.outline {
+  background: transparent;
+  border: 2px solid white;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--gris-clair);
+  padding: 30px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--gris);
+  border-top: 1px solid var(--bord);
+}
+.footer strong { color: var(--bleu); }
+
+/* ===== UTILITAIRES ===== */
+.encart {
+  background: var(--orange-clair);
+  border-left: 4px solid var(--orange);
+  padding: 14px 18px;
+  border-radius: 4px;
+  margin: 30px auto;
+  max-width: 800px;
+  font-size: 15px;
+}
+.encart strong { color: var(--bleu); }
+
+.contact-mini {
+  text-align: center;
+  font-size: 14px;
+  color: var(--gris);
+  margin-top: 30px;
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HÉROS ===== -->
+<div class="heros">
+  <div class="container">
+    <div class="logo-bloc">
+      <span class="flocon">❄</span>
+      <span class="nom-marque">inerWeb</span>
+      <span class="cartouche">Édu</span>
+    </div>
+    <div class="surtitre">DEVOIR MAISON NUMÉRIQUE</div>
+    <h1>F-Gas III · Le Kahoot maison</h1>
+    <div class="accroche">Révise la réforme de l'habilitation fluides depuis ton téléphone.</div>
+    <div class="badges">
+      <span class="badge">🎓 6 classes</span>
+      <span class="badge">📱 100 % mobile</span>
+      <span class="badge">📊 Note auto /20</span>
+      <span class="badge">🔐 Chiffré</span>
+      <span class="badge">⏱ ~12 min</span>
+    </div>
+    <div class="signature">F. Henninot — LP Privé Jacques Raynaud, Campus ÉQUATIO Marseille</div>
+  </div>
+</div>
+
+<!-- ===== POURQUOI ===== -->
+<div class="section">
+  <h2>L'idée en 3 mots</h2>
+  <div class="soustitre-section">Un cours qui se révise comme un jeu — mais qui prépare une vraie habilitation</div>
+
+  <div class="grid-pitch">
+    <div class="card-pitch">
+      <div class="icone">🎯</div>
+      <h3>Apprendre en jouant</h3>
+      <p>Une diapo de cours en haut, une question en bas. L'élève switche entre les deux, le système masque la diapo après 2 secondes pour le forcer à mémoriser.</p>
+    </div>
+    <div class="card-pitch orange">
+      <div class="icone">♻️</div>
+      <h3>Refaire jusqu'à 20/20</h3>
+      <p>Tentatives illimitées. La meilleure note compte. Plus l'élève s'entraîne, mieux il se prépare à la vraie épreuve d'habilitation A1.</p>
+    </div>
+    <div class="card-pitch vert">
+      <div class="icone">📊</div>
+      <h3>Le prof voit tout</h3>
+      <p>Tableau de bord en direct : qui a fait, qui pas, meilleure note, durée, nombre de fois où il a regardé la diapo. Export CSV pour ÉcoleDirecte en 1 clic.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CÔTÉ ÉLÈVE ===== -->
+<div class="section alt">
+  <div class="inner">
+    <h2>📱 Côté élève</h2>
+    <div class="soustitre-section">Sur n'importe quel téléphone, en 3 étapes</div>
+
+    <!-- ÉTAPE 1 : choix classe -->
+    <div class="demo-row">
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="eg-garde">
+            <div class="logo">
+              <span class="floc">❄</span>
+              <span class="nm">inerWeb</span>
+              <span class="ct">Édu</span>
+            </div>
+            <div class="surt">DEVOIR MAISON · BAC PRO MFER</div>
+            <h2>La réforme de l'habilitation fluides</h2>
+            <div class="ssub">Arrêtés du 21 nov. 2025</div>
+            <div class="form-bloc">
+              <div class="ft">1️⃣ Choisis ta classe</div>
+              <button class="btn-cl">🎓 1 IFCA</button>
+              <button class="btn-cl">🎓 2 IFCA</button>
+              <button class="btn-cl">🎓 2 TNE</button>
+              <button class="btn-cl actif">🎓 1 MFER</button>
+              <button class="btn-cl">🎓 T MFER</button>
+              <button class="btn-cl">🎓 TP CVC</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-text">
+        <h3><span class="num">1</span>Connexion en 30 secondes</h3>
+        <p>L'élève ouvre le lien sur son téléphone, choisit sa classe, saisit son <strong>pseudo</strong> (initiale prénom + 4 lettres nom) et son <strong>mot de passe</strong>.</p>
+        <p><strong>Première fois ?</strong> Mot de passe par défaut = nom de la classe (ex : <code>1MFER</code>). Il peut le changer ensuite.</p>
+        <ul>
+          <li>Aucune appli à installer</li>
+          <li>Fonctionne sur n'importe quel navigateur</li>
+          <li>Compte conservé entre tel et PC</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 2 : DM split-screen -->
+    <div class="demo-row inverse">
+      <div class="demo-text">
+        <h3><span class="num">2</span>Cours + question, en split-screen</h3>
+        <p>L'écran est coupé en deux : <strong>la diapo de cours en haut</strong>, <strong>la question en bas</strong>. La diapo se masque automatiquement après quelques secondes — l'élève doit la **revoir activement** s'il en a besoin.</p>
+        <ul>
+          <li>16 diapos exactement comme le PowerPoint d'origine</li>
+          <li>20 questions ancrées sur les diapos (40 en mode "examen blanc")</li>
+          <li>Compteur "📖 ×3" : combien de fois il a consulté la diapo</li>
+          <li>Pas de retour en arrière, pas de modification</li>
+        </ul>
+      </div>
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="eg-dm">
+            <div class="eg-dm-haut">
+              <div class="header-d">
+                <span style="color:var(--bleu);font-weight:bold">❄ inerWeb</span>
+                <span class="ct" style="font-size:7px;padding:1px 4px">Édu</span>
+                <span class="pgn">3 / 16</span>
+              </div>
+              <div class="titre-d">Deux attestations à ne pas confondre</div>
+              <div class="ssub-d">Aptitude = la personne ; Capacité = l'entreprise</div>
+              <div class="card-d">
+                <h4>👷 APTITUDE</h4>
+                Personne · Valable 7 ans · Renouvellement par formation
+              </div>
+              <div class="card-d orange">
+                <h4>🏢 CAPACITÉ</h4>
+                Entreprise · Valable 5 ans · Audit + dossier
+              </div>
+            </div>
+            <div class="eg-dm-bas">
+              <div class="compteur">
+                <span>Question 4 / 20</span>
+                <span>📖 ×2</span>
+              </div>
+              <div class="barre"><div class="barre-fill"></div></div>
+              <button class="btn-voir">📖 Revoir la diapo</button>
+              <div class="qbloc">
+                <span class="qnum">Question 4/20</span>
+                <div class="qtxt">Quelle est la durée de validité de la nouvelle attestation d'APTITUDE ?</div>
+                <div class="ch">5 ans</div>
+                <div class="ch">10 ans</div>
+                <div class="ch bonne">✓ 7 ans</div>
+                <div class="ch">À vie</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 3 : résultat -->
+    <div class="demo-row">
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="eg-res">
+            <div class="logo">
+              <span class="floc">❄</span>
+              <span class="nm">inerWeb</span>
+              <span class="ct">Édu</span>
+            </div>
+            <div class="surt">RÉSULTAT</div>
+            <h2>DM terminé !</h2>
+            <div class="gn">15.20<span>/20</span></div>
+            <div class="pseudo">FHENN · 1 MFER</div>
+            <div class="stats-r">
+              📊 Bonnes : <strong>19/25</strong> (76%)<br>
+              ⏱ Durée : <strong>11 min 42 s</strong><br>
+              📖 Consultations : <strong>8</strong><br>
+              🔄 Tentative N° <strong>2</strong>
+            </div>
+            <button class="btn-r">🔄 Refaire le DM</button>
+          </div>
+        </div>
+      </div>
+      <div class="demo-text">
+        <h3><span class="num">3</span>Note automatique sur 20</h3>
+        <p>À la fin du DM, la note est calculée et envoyée automatiquement vers le tableau de bord prof. L'élève voit son score, sa durée, et peut <strong>refaire autant de fois qu'il veut</strong>.</p>
+        <ul>
+          <li>La meilleure note remplace la précédente</li>
+          <li>Le compteur de tentatives reste visible</li>
+          <li>Au prof de voir si l'élève s'est entraîné 1, 3 ou 10 fois</li>
+        </ul>
+        <p style="font-style:italic;color:var(--gris)">Plus l'élève fait, plus il révise. Plus il révise, plus il est prêt pour l'épreuve réelle d'habilitation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CÔTÉ PROF ===== -->
+<div class="section">
+  <h2>🖥 Côté prof</h2>
+  <div class="soustitre-section">Tableau de bord complet, code unique, classe par classe</div>
+
+  <div class="demo-row">
+    <div class="laptop-mockup" style="width:100%">
+      <div class="laptop-screen">
+        <div class="lp-header">
+          <span class="floc">❄</span>
+          <span class="nm">inerWeb</span>
+          <span class="ct">Édu</span>
+          <span class="tit">F-Gas Eval MFER · Tableau de bord prof</span>
+          <span class="right">· 1 MFER</span>
+        </div>
+        <div class="lp-tabs">
+          <div class="lp-tab actif">📊 Notes</div>
+          <div class="lp-tab">👥 Comptes</div>
+          <div class="lp-tab">⚠️ Activité</div>
+          <div class="lp-tab">⚙️ Paramètres</div>
+        </div>
+        <div class="lp-content">
+          <div class="lp-stats">
+            <div class="lp-stat-card"><div class="lab">Effectif</div><div class="val">22</div></div>
+            <div class="lp-stat-card orange"><div class="lab">Ont fait</div><div class="val">18</div></div>
+            <div class="lp-stat-card vert"><div class="lab">Moyenne</div><div class="val">14.1</div></div>
+            <div class="lp-stat-card vert"><div class="lab">% Réussite</div><div class="val">82%</div></div>
+          </div>
+          <div class="lp-tab-content">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pseudo</th>
+                  <th>Statut</th>
+                  <th>Meilleure</th>
+                  <th>Tent.</th>
+                  <th>Diapo</th>
+                  <th>Durée</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>AMART</strong></td>
+                  <td><span class="stat-pill vert">🟢 Réussite</span></td>
+                  <td>17.60</td>
+                  <td>3</td>
+                  <td>12</td>
+                  <td>13 min</td>
+                </tr>
+                <tr>
+                  <td><strong>FHENN</strong></td>
+                  <td><span class="stat-pill vert">🟢 Réussite</span></td>
+                  <td>15.20</td>
+                  <td>2</td>
+                  <td>8</td>
+                  <td>11 min</td>
+                </tr>
+                <tr>
+                  <td><strong>JDUPO</strong></td>
+                  <td><span class="stat-pill jaune">🟡 Moyen</span></td>
+                  <td>11.20</td>
+                  <td>1</td>
+                  <td>4</td>
+                  <td>9 min</td>
+                </tr>
+                <tr>
+                  <td><strong>SMOREL</strong> <span class="badge-dt">🚨</span></td>
+                  <td><span class="stat-pill rouge">🔴 Échec</span></td>
+                  <td>6.40</td>
+                  <td>4</td>
+                  <td>0</td>
+                  <td>3 min</td>
+                </tr>
+                <tr>
+                  <td><strong>LBLAN</strong></td>
+                  <td><span class="stat-pill" style="background:var(--bord);color:var(--gris)">⚪ Pas fait</span></td>
+                  <td>—</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-pitch" style="margin-top:40px">
+    <div class="card-pitch">
+      <div class="icone">📊</div>
+      <h3>Onglet Notes</h3>
+      <p>Récap classe avec statut visuel : 🟢 réussite (≥15), 🟡 moyen (10-14), 🔴 échec (&lt;10), ⚪ pas fait. Filtres rapides + export CSV ÉcoleDirecte.</p>
+    </div>
+    <div class="card-pitch orange">
+      <div class="icone">👥</div>
+      <h3>Onglet Comptes</h3>
+      <p>40 comptes max par classe. Reset mot de passe à distance, suppression, renommage de pseudo. Jauge anti-spam visible en permanence.</p>
+    </div>
+    <div class="card-pitch vert">
+      <div class="icone">⚠️</div>
+      <h3>Onglet Activité</h3>
+      <p>Journal de sécurité : qui a essayé F12 (badge 🚨), comptes verrouillés après 5 essais ratés, créations suspectes. Pour les profs un peu paranos.</p>
+    </div>
+    <div class="card-pitch">
+      <div class="icone">⚙️</div>
+      <h3>Onglet Paramètres</h3>
+      <p>Activer/désactiver le DM par classe. Choisir le mode (20 q DM léger ou 40 q examen blanc). Limite de tentatives. Tout en 1 clic.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POURQUOI / SÉCURITÉ ===== -->
+<div class="pourquoi">
+  <div class="container">
+    <h2>Pourquoi ce DM tient la route</h2>
+    <div class="soustitre-section">L'anti-triche est intégré dès la conception</div>
+
+    <div class="grid-args">
+      <div class="arg-card">
+        <div class="icone">🔐</div>
+        <h3>Questions chiffrées</h3>
+        <p>Les 50 questions sont chiffrées en AES-256-GCM. F12 + Ctrl+F sur "correct" ne donne rien. Sans le code de la classe, le navigateur ne sait même pas lire le fichier.</p>
+      </div>
+      <div class="arg-card">
+        <div class="icone">📝</div>
+        <h3>Note signée</h3>
+        <p>Le score est signé HMAC avant envoi. Impossible de bidouiller un faux 20/20 via Postman ou la console réseau.</p>
+      </div>
+      <div class="arg-card">
+        <div class="icone">👁</div>
+        <h3>Détection F12</h3>
+        <p>Si l'élève ouvre les outils développeur, un badge 🚨 apparaît à côté de son pseudo dans le tableau de bord. Tu sais qui a essayé.</p>
+      </div>
+      <div class="arg-card">
+        <div class="icone">🔢</div>
+        <h3>5 essais et lock</h3>
+        <p>Mot de passe faux 5 fois → blocage 5 minutes. Pas de force brute possible sur les comptes des copains.</p>
+      </div>
+      <div class="arg-card">
+        <div class="icone">🚫</div>
+        <h3>Limite 40/classe</h3>
+        <p>Au-delà de 40 inscriptions par classe, blocage. Anti-spam, anti-intrusion intempestive.</p>
+      </div>
+      <div class="arg-card">
+        <div class="icone">🔄</div>
+        <h3>Reset à distance</h3>
+        <p>Élève qui a oublié son mot de passe ? Un clic 🔄 dans le tableau de bord, c'est remis à la valeur de la classe. 30 secondes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ENCART ===== -->
+<div class="section">
+  <div class="encart">
+    <strong>💡 Le pari pédagogique :</strong> faire passer aux élèves <strong>tout ce qu'ils verront le jour de l'examen d'habilitation</strong>, mais sous forme ludique. Plus ils refont le DM, plus ils mémorisent les 50 questions clés du référentiel. Le jour J, plus aucune surprise.
+  </div>
+</div>
+
+<!-- ===== CTA ===== -->
+<div class="cta-final">
+  <h2>Prêt à essayer ?</h2>
+  <p>Outil libre d'usage pour les collègues du LP Privé Jacques Raynaud. Tu veux le tester avec une de tes classes ? Demande-moi l'accès au tableau de bord.</p>
+  <div class="btns">
+    <a href="dm.html" class="btn">📱 Voir la page élève</a>
+    <a href="tableau-bord.html" class="btn outline">🖥 Voir le tableau de bord</a>
+  </div>
+  <div class="contact-mini" style="color:rgba(255,255,255,0.7);margin-top:30px">
+    F. Henninot · Filière Froid / CVC / TNE<br>
+    Campus ÉQUATIO — Marseille
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  <strong>inerWeb Édu</strong> — Outils pédagogiques pour la filière Froid / CVC / TNE<br>
+  © 2026 F. Henninot — LP Privé Jacques Raynaud, Campus ÉQUATIO Marseille<br>
+  <span style="font-size:11px">Conforme RGPD : aucune donnée personnelle élève. Pseudonymisation, hébergement Google Sheets contrôlé par l'enseignant.</span>
+</div>
+
+</body>
+</html>
