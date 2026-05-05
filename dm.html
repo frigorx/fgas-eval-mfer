@@ -335,6 +335,64 @@ h1, h2, h3, h4 { font-family: 'Trebuchet MS', sans-serif; font-weight: bold; col
 }
 @keyframes rot { to { transform: rotate(360deg); } }
 
+/* Overlay plein écran pour les attentes API */
+#overlay-chargement {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(27,58,99,0.96);
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: white; padding: 30px 20px;
+}
+#overlay-chargement.actif { display: flex; }
+.flocon-anime {
+  font-size: 90px;
+  color: var(--orange);
+  display: inline-block;
+  animation: rot 2s linear infinite;
+  text-shadow: 0 0 20px rgba(255,107,53,0.5);
+}
+.overlay-titre {
+  margin-top: 20px;
+  font-size: 22px;
+  font-family: 'Trebuchet MS', sans-serif;
+  font-weight: bold;
+  text-align: center;
+}
+.overlay-sous {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--orange);
+  text-align: center;
+  font-style: italic;
+  max-width: 280px;
+}
+.overlay-points {
+  margin-top: 16px;
+  font-size: 13px;
+  opacity: 0.7;
+}
+.overlay-points::after {
+  content: '';
+  animation: dots 1.5s steps(4) infinite;
+}
+@keyframes dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+}
+
+/* Bouton désactivé pendant attente */
+.btn-action.busy, .btn-secondaire.busy {
+  pointer-events: none;
+  opacity: 0.6;
+  position: relative;
+}
+.btn-action.busy::after, .btn-secondaire.busy::after {
+  content: '⏳ ';
+  margin-right: 4px;
+}
+
 .footer-mini {
   text-align: center;
   font-size: 11px;
@@ -348,6 +406,14 @@ h1, h2, h3, h4 { font-family: 'Trebuchet MS', sans-serif; font-weight: bold; col
 </style>
 </head>
 <body>
+
+<!-- ===== OVERLAY CHARGEMENT (au-dessus de tout) ===== -->
+<div id="overlay-chargement">
+  <div class="flocon-anime">❄</div>
+  <div class="overlay-titre" id="overlay-titre">Connexion en cours</div>
+  <div class="overlay-sous" id="overlay-sous">inerWeb Édu travaille pour toi</div>
+  <div class="overlay-points">Patiente</div>
+</div>
 
 <!-- ===== ÉCRAN 1 : GARDE ===== -->
 <div class="ecran actif" id="ecran-garde">
@@ -499,6 +565,15 @@ let etat = {
 function ecran(id) {
   document.querySelectorAll('.ecran').forEach(e => e.classList.remove('actif'));
   document.getElementById(id).classList.add('actif');
+}
+
+function montrerOverlay(titre, sous) {
+  document.getElementById('overlay-titre').textContent = titre || 'Chargement';
+  document.getElementById('overlay-sous').textContent = sous || 'inerWeb Édu travaille pour toi';
+  document.getElementById('overlay-chargement').classList.add('actif');
+}
+function cacherOverlay() {
+  document.getElementById('overlay-chargement').classList.remove('actif');
 }
 
 async function appelApi(action, params = {}, methode = 'POST') {
@@ -815,13 +890,19 @@ document.getElementById('btn-connexion').addEventListener('click', async () => {
     afficherErreur('login-erreur', 'Saisis ton mot de passe');
     return;
   }
-  afficherInfo('login-erreur', 'Connexion en cours…');
+  document.getElementById('btn-connexion').classList.add('busy');
+  document.getElementById('btn-creer-compte').classList.add('busy');
+  montrerOverlay('Connexion…', 'Vérification de ton pseudo et mot de passe (10 à 20 sec, c\'est normal)');
   const res = await appelApi('login', { classe: etat.classe, pseudo, mdp });
+  document.getElementById('btn-connexion').classList.remove('busy');
+  document.getElementById('btn-creer-compte').classList.remove('busy');
   if (!res.ok) {
+    cacherOverlay();
     afficherErreur('login-erreur', res.error);
     return;
   }
   if (!res.ouvert) {
+    cacherOverlay();
     afficherErreur('login-erreur', 'Le DM n\'est pas ouvert pour cette classe.');
     return;
   }
@@ -839,9 +920,14 @@ document.getElementById('btn-creer-compte').addEventListener('click', async () =
     return;
   }
   if (!mdp) mdp = etat.classe; // mdp par défaut = classe
-  afficherInfo('login-erreur', 'Création du compte…');
+  document.getElementById('btn-connexion').classList.add('busy');
+  document.getElementById('btn-creer-compte').classList.add('busy');
+  montrerOverlay('Création du compte…', 'On t\'inscrit dans la classe (10 à 20 sec, c\'est normal)');
   const res = await appelApi('create_account', { classe: etat.classe, pseudo, mdp });
+  document.getElementById('btn-connexion').classList.remove('busy');
+  document.getElementById('btn-creer-compte').classList.remove('busy');
   if (!res.ok) {
+    cacherOverlay();
     afficherErreur('login-erreur', res.error);
     return;
   }
@@ -852,18 +938,18 @@ document.getElementById('btn-creer-compte').addEventListener('click', async () =
 
 // ============== LANCEMENT DM ==============
 async function lancerDM() {
-  ecran('ecran-chargement');
-  document.getElementById('chargement-message').textContent = 'Téléchargement des questions…';
+  montrerOverlay('Préparation du DM…', 'Téléchargement des questions');
   try {
     const r = await fetch(QUESTIONS_ENC_URL);
     if (!r.ok) throw new Error('Impossible de charger questions.enc');
     const blob = await r.text();
-    document.getElementById('chargement-message').textContent = 'Déchiffrement…';
+    montrerOverlay('Préparation du DM…', 'Déchiffrement sécurisé des questions');
     etat.questions = await dechiffrerQuestions(blob, etat.codeAes);
+    montrerOverlay('Préparation du DM…', 'Génération de ton parcours personnalisé');
   } catch (e) {
-    document.getElementById('chargement-message').innerHTML =
-      '<div class="message-erreur">Erreur : ' + e.message + '<br>Vérifie le mot de passe AES.</div>';
-    setTimeout(() => ecran('ecran-login'), 3000);
+    cacherOverlay();
+    afficherErreur('login-erreur', 'Erreur : ' + e.message);
+    ecran('ecran-login');
     return;
   }
 
@@ -919,6 +1005,7 @@ async function lancerDM() {
   etat.nbConsultDiapo = 0;
   etat.tempsDebut = Date.now();
 
+  cacherOverlay();
   ecran('ecran-dm');
   afficherQuestion();
 }
@@ -1048,8 +1135,7 @@ function autoMasquage() {
 
 // ============== TERMINER DM ==============
 async function terminerDM() {
-  ecran('ecran-chargement');
-  document.getElementById('chargement-message').textContent = 'Calcul de la note et envoi…';
+  montrerOverlay('Calcul de ta note…', 'Envoi de tes résultats au tableau de bord');
 
   const total = etat.questionsAffichees.length;
   const dureeSec = Math.round((Date.now() - etat.tempsDebut) / 1000);
@@ -1090,6 +1176,7 @@ async function terminerDM() {
     stats += '<div style="color:#fbbf24;margin-top:10px">⚠ ' + (res.error || 'Erreur d\'envoi — la note n\'a peut-être pas été enregistrée.') + '</div>';
   }
   document.getElementById('resultat-stats').innerHTML = stats;
+  cacherOverlay();
   ecran('ecran-resultat');
 }
 
