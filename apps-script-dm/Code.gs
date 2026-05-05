@@ -729,3 +729,12 @@ function initialiser() {
   getSheet(ONGLET_PARAMS);
   Logger.log('Onglets créés.');
 }
+
+// ========================
+// KEEP ALIVE (anti cold-start)
+// ========================
+// Appelée par un trigger toutes les 5 min pour empecher Apps Script de s'endormir
+// → reduit la latence des elèves de ~18s à ~3-5s
+function keepAlive() {
+  return new Date().toISOString();
+}
