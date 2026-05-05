@@ -476,7 +476,7 @@ function afficherSelecteurClasse() {
   ['1IFCA','2IFCA','2TNE','1MFER','TMFER','TPCVC'].forEach(c => {
     const card = document.createElement('div');
     card.className = 'card-classe';
-    const ouvert = etat.params['ouvert_' + c] === 'true';
+    const ouvert = (etat.params['ouvert_' + c] === true || etat.params['ouvert_' + c] === 'true');
     const mode = etat.params['mode_' + c] || 'leger';
     card.innerHTML =
       '<div class="nom">🎓 ' + NOMS_CLASSES[c] + '</div>' +

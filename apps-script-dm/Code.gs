@@ -158,6 +158,10 @@ function initSheet(sh, nom) {
   return sh;
 }
 
+function estVrai(v) {
+  return v === true || v === 'true' || v === 'TRUE' || v === 1 || v === '1';
+}
+
 function lireToutesLignes(sh) {
   const data = sh.getDataRange().getValues();
   if (data.length < 2) return { entetes: data[0] || [], lignes: [] };
@@ -275,7 +279,7 @@ function createAccount(params) {
   }
 
   const paramsGlobaux = lireParams();
-  if (paramsGlobaux['ouvert_' + classe] !== 'true') {
+  if (!estVrai(paramsGlobaux['ouvert_' + classe])) {
     return { ok: false, error: 'Le DM est fermé pour la classe ' + classe };
   }
 
@@ -362,7 +366,7 @@ function login(params) {
 
   const paramsGlobaux = lireParams();
   const mode = paramsGlobaux['mode_' + classe] || 'leger';
-  const ouvert = paramsGlobaux['ouvert_' + classe] === 'true';
+  const ouvert = estVrai(paramsGlobaux['ouvert_' + classe]);
 
   // Renvoie un token signé HMAC pour les requêtes suivantes
   const token = calculerHmac(classe + ':' + pseudo + ':' + Date.now());
@@ -494,7 +498,7 @@ function getClassStatus(params) {
   return {
     ok: true,
     classe,
-    ouvert: paramsGlobaux['ouvert_' + classe] === 'true',
+    ouvert: estVrai(paramsGlobaux['ouvert_' + classe]),
     mode: paramsGlobaux['mode_' + classe] || 'leger',
     date_debut: paramsGlobaux.date_debut_global || '',
     date_fin: paramsGlobaux.date_fin_global || ''
